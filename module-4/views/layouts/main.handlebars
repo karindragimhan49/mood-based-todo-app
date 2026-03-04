@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{title}}</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/index.css" />
+  <link rel="stylesheet" href="/css/loginForm.css" />
+  <link rel="stylesheet" href="/css/tasksComponent.css" />
+  <link rel="stylesheet" href="/css/taskCreationForm.css" />
+  <link rel="stylesheet" href="/css/suggestedTaskComponent.css" />
+  <link rel="stylesheet" href="/css/moodSelecter.css" />
+  <link rel="stylesheet" href="/css/weather.css" />
+</head>
+<body>
+
+  {{{body}}}
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts (load order matters) -->
+  <script src="/js/index.js"></script>
+  <script src="/js/loginForm.js"></script>
+  <script src="/js/tasksComponent.js"></script>
+  <script src="/js/taskCreationForm.js"></script>
+  <script src="/js/suggestedTaskComponent.js"></script>
+  <script src="/js/moodSelecter.js"></script>
+  <script src="/js/weather.js"></script>
+
+</body>
+</html>

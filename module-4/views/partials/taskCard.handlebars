@@ -1,0 +1,61 @@
+<!-- ─────────────────────────────────────────────
+     Partial: taskCard
+     Used in:  {{#each tasks}}{{> taskCard}}{{/each}}
+     Note: actual rendering done client-side via JS;
+           this template is kept for SSR reference.
+──────────────────────────────────────────────── -->
+<div class="task-card {{#if completed}}task-card--completed{{/if}}"
+     data-id="{{id}}"
+     data-action-area="card">
+
+  <!-- Check / Uncheck -->
+  <button class="task-card__check"
+          data-action="toggle"
+          data-id="{{id}}"
+          aria-label="{{#if completed}}Mark incomplete{{else}}Mark complete{{/if}}">
+    {{#if completed}}
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+           fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+    {{else}}
+      <span class="task-card__check-ring"></span>
+    {{/if}}
+  </button>
+
+  <!-- Body (click to edit) -->
+  <div class="task-card__body" data-action="edit" data-id="{{id}}">
+    <h3 class="task-card__title">{{title}}</h3>
+    {{#if description}}
+      <p class="task-card__desc">{{description}}</p>
+    {{/if}}
+    <div class="task-card__meta">
+      {{#if duration}}
+        <span class="task-card__meta-item">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+               fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          {{duration}} min
+        </span>
+      {{/if}}
+      {{#if dueDate}}
+        <span class="task-card__meta-item task-card__due">{{dueDate}}</span>
+      {{/if}}
+    </div>
+  </div>
+
+  <!-- Delete -->
+  <button class="task-card__delete"
+          data-action="delete"
+          data-id="{{id}}"
+          aria-label="Delete task">
+    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="3 6 5 6 21 6"/>
+      <path d="M19 6l-1 14H6L5 6"/>
+      <path d="M10 11v6"/><path d="M14 11v6"/>
+      <path d="M9 6V4h6v2"/>
+    </svg>
+  </button>
+</div>
