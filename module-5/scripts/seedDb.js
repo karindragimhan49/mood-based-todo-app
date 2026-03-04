@@ -26,13 +26,13 @@ function buildSeedBlogs(users) {
   return [
     {
       title:   'Getting Started with Node.js',
-      content: 'Node.js is a powerful JavaScript runtime built on Chrome's V8 engine. ' +
+      content: 'Node.js is a powerful JavaScript runtime built on Chrome\'s V8 engine. ' +
                'It allows you to run JavaScript on the server side and build scalable network applications.',
       user:    alice._id,
     },
     {
       title:   'Understanding Mongoose & MongoDB',
-      content: 'Mongoose provides a straight-forward, schema-based solution to model your application data. ' +
+      content: 'Mongoose provides a straightforward, schema-based solution to model your application data. ' +
                'It includes built-in type casting, validation, query building, and business logic hooks.',
       user:    alice._id,
     },
