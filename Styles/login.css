@@ -1,0 +1,24 @@
+/* =============================================
+   login.css — Login Page Container
+   Mood-Based To-Do App
+   ============================================= */
+
+:root {
+  --bg-primary: #13151f;
+  --bg-secondary: #1e2130;
+  --bg-tertiary: #252a3d;
+  --accent: #aaff2e;
+  --text-primary: #ffffff;
+  --text-secondary: #9ea3b8;
+  --border: #2a2f45;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

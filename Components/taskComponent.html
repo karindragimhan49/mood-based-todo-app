@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Component – Mood-Based To-Do App</title>
+    <link rel="stylesheet" href="../Styles/tasksComponent.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  </head>
+  <body>
+
+    <div class="preview-wrapper">
+      <p class="preview-label">Task Component</p>
+
+      <!-- ── Task Card: Default ── -->
+      <div class="task-card" style="margin-bottom: 20px;">
+        <div class="task-card__header">
+          <span class="task-card__name">Run!</span>
+          <span class="task-card__check"><i class="fa-regular fa-circle-check"></i></span>
+        </div>
+        <span class="task-card__duration">4 mins</span>
+        <div class="task-card__time">1:21 <span class="period">PM</span></div>
+        <div class="task-card__actions">
+          <button class="task-card__action-btn complete">
+            <i class="fa-solid fa-check"></i> Complete
+          </button>
+          <button class="task-card__action-btn">
+            <i class="fa-regular fa-pen-to-square"></i> Edit
+          </button>
+          <button class="task-card__action-btn delete">
+            <i class="fa-regular fa-trash-can"></i> Delete
+          </button>
+        </div>
+      </div>
+
+      <!-- ── Task Card: Completed ── -->
+      <div class="task-card completed">
+        <div class="task-card__header">
+          <span class="task-card__name">Bake Brownies</span>
+          <span class="task-card__check" style="color: #9ea3b8;">
+            <i class="fa-regular fa-circle-check"></i>
+          </span>
+        </div>
+        <span class="task-card__duration">809 mins</span>
+        <div class="task-card__time">12:09 <span class="period">PM</span></div>
+        <div class="task-card__actions">
+          <button class="task-card__action-btn complete">
+            <i class="fa-solid fa-check"></i> Complete
+          </button>
+          <button class="task-card__action-btn">
+            <i class="fa-regular fa-pen-to-square"></i> Edit
+          </button>
+          <button class="task-card__action-btn delete">
+            <i class="fa-regular fa-trash-can"></i> Delete
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </body>
+</html>

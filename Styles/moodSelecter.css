@@ -1,0 +1,240 @@
+/* =============================================
+   moodSelecter.css — Mood Selector Component
+   Mood-Based To-Do App
+   ============================================= */
+
+:root {
+  --bg-primary: #13151f;
+  --bg-secondary: #1e2130;
+  --bg-tertiary: #252a3d;
+  --accent: #aaff2e;
+  --accent-glow: rgba(170, 255, 46, 0.15);
+  --text-primary: #ffffff;
+  --text-secondary: #9ea3b8;
+  --border: #2a2f45;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --font: 'Segoe UI', system-ui, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+/* ── Mood Modal ── */
+.mood-modal {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 28px 24px;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  box-shadow: 0 16px 60px rgba(0, 0, 0, 0.6);
+}
+
+.mood-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.mood-modal__title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.mood-modal__close {
+  width: 28px;
+  height: 28px;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background 0.2s, color 0.2s;
+}
+
+.mood-modal__close:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+/* ── Mood Icons Row ── */
+.mood-icons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+
+.mood-icon {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+  transition: color 0.2s, transform 0.2s;
+  cursor: pointer;
+  user-select: none;
+}
+
+.mood-icon:hover,
+.mood-icon.active {
+  color: var(--accent);
+  transform: scale(1.2);
+}
+
+/* ── Slider ── */
+.mood-slider-wrapper {
+  position: relative;
+  padding: 4px 0;
+}
+
+.mood-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 50px;
+  background: linear-gradient(to right, var(--accent) 50%, var(--bg-tertiary) 50%);
+  outline: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.mood-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #0d0f18;
+  box-shadow: 0 0 8px var(--accent-glow);
+  cursor: pointer;
+  transition: box-shadow 0.2s, transform 0.15s;
+}
+
+.mood-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 14px var(--accent);
+  transform: scale(1.1);
+}
+
+.mood-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid #0d0f18;
+  cursor: pointer;
+}
+
+.mood-slider::-moz-range-track {
+  background: var(--bg-tertiary);
+  height: 6px;
+  border-radius: 50px;
+}
+
+/* ── Mood Button Group (alternative style) ── */
+.mood-btn-group {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.mood-btn {
+  flex: 1;
+  padding: 11px 10px;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.mood-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-glow);
+}
+
+.mood-btn.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #0d0f18;
+}
+
+/* ── Confirm Button ── */
+.btn-set-mood {
+  background: var(--accent);
+  color: #0d0f18;
+  border: none;
+  border-radius: 50px;
+  padding: 13px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 20px;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-set-mood:hover {
+  opacity: 0.88;
+}
+
+.btn-set-mood:active {
+  transform: scale(0.98);
+}
+
+/* ── Mood Label ── */
+.mood-label {
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  margin-top: 10px;
+}
+
+.mood-label .mood-value {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .mood-modal {
+    padding: 22px 16px 20px;
+  }
+
+  .mood-btn-group {
+    flex-direction: column;
+  }
+}
