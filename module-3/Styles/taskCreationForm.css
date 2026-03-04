@@ -1,0 +1,34 @@
+/* ====================================================
+   taskCreationForm.css — Add / Edit Task Modal Styles
+   Module 3 — Mood-Based To-Do App
+   ==================================================== */
+
+/* Header inside task modal */
+.creation-form-card__header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-6);
+}
+.creation-form-card__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: -.02em;
+}
+.creation-form-card__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* Character counter hint */
+.input-hint {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 767px) {
+  .creation-form-card__title { font-size: var(--font-size-xl); }
+}

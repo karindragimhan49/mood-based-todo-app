@@ -1,0 +1,217 @@
+/* ====================================================
+   tasksComponent.css — Today's Tasks Card & Grid
+   Module 3 — Mood-Based To-Do App
+   ==================================================== */
+
+/* ── Tasks Card ───────────────────────────────────── */
+.tasks-card {
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Card Header ──────────────────────────────────── */
+.tasks-card__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  flex-wrap: wrap;
+}
+.tasks-card__titles { display: flex; flex-direction: column; gap: var(--space-1); }
+.tasks-card__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-accent);
+  line-height: 1.15;
+  letter-spacing: -.01em;
+}
+.tasks-card__subtitle { font-size: var(--font-size-sm); color: var(--color-text-secondary); }
+
+.tasks-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+/* "Show Completed" toggles dim when active */
+.btn--toggle.is-active {
+  background: transparent;
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* ── Task Grid ────────────────────────────────────── */
+.task-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-4);
+}
+
+/* ── Task Card ────────────────────────────────────── */
+.task-card {
+  position: relative;
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: border-color var(--transition-normal),
+              box-shadow  var(--transition-normal),
+              transform   var(--transition-normal),
+              background  var(--transition-normal);
+  overflow: hidden;
+}
+
+.task-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(163,255,18,.04) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.task-card:hover {
+  border-color: rgba(163,255,18,.3);
+  box-shadow: 0 4px 20px rgba(0,0,0,.3), 0 0 0 1px rgba(163,255,18,.08);
+  transform: translateY(-2px);
+}
+.task-card:hover::before { opacity: 1; }
+
+/* ── Completed State ──────────────────────────────── */
+.task-card.task-card--completed {
+  opacity: .65;
+  background: rgba(255,255,255,.03);
+  border-color: rgba(255,255,255,.04);
+}
+.task-card.task-card--completed .task-card__title {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+.task-card.task-card--completed .task-card__check {
+  background: rgba(163,255,18,.25);
+  border-color: var(--color-accent);
+}
+.task-card.task-card--completed .task-card__check svg { stroke: var(--color-accent); }
+
+/* ── Top Row ──────────────────────────────────────── */
+.task-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.task-card__title {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+  word-break: break-word;
+  flex: 1;
+}
+
+.task-card__check {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(163,255,18,.45);
+  background: rgba(163,255,18,.06);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  transition: all var(--transition-fast);
+  z-index: 1; /* above card click area */
+}
+.task-card__check:hover {
+  background: rgba(163,255,18,.18);
+  border-color: var(--color-accent);
+  box-shadow: 0 0 8px var(--color-accent-glow);
+}
+
+/* ── Description ──────────────────────────────────── */
+.task-card__desc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  line-height: 1.55;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.task-card__duration {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  letter-spacing: .02em;
+}
+
+.task-card__time {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+/* ── Delete Button (hover-reveal) ────────────────── */
+.task-card__delete {
+  position: absolute;
+  top: var(--space-3); right: var(--space-3);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: rgba(255,107,107,.12);
+  border: 1px solid rgba(255,107,107,.25);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--color-danger);
+  opacity: 0;
+  transform: scale(.8);
+  transition: opacity var(--transition-fast),
+              transform var(--transition-fast),
+              background var(--transition-fast);
+  z-index: 2;
+}
+.task-card:hover .task-card__delete {
+  opacity: 1;
+  transform: scale(1);
+}
+.task-card__delete:hover {
+  background: rgba(255,107,107,.25) !important;
+  border-color: rgba(255,107,107,.55) !important;
+  box-shadow: 0 0 10px rgba(255,107,107,.25);
+}
+
+/* ── Due date badge ───────────────────────────────── */
+.task-card__due {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+.task-card__due svg { flex-shrink: 0; }
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 767px) {
+  .tasks-card { padding: var(--space-5); gap: var(--space-5); }
+  .tasks-card__header { flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+  .tasks-card__title  { font-size: var(--font-size-xl); }
+  .tasks-card__actions { width: 100%; }
+  .task-grid { grid-template-columns: 1fr; gap: var(--space-3); }
+  .task-card__time { font-size: var(--font-size-lg); }
+  /* Always show delete on mobile */
+  .task-card__delete { opacity: 1; transform: scale(1); }
+}
+@media (max-width: 400px) {
+  .tasks-card__actions { flex-direction: column; align-items: stretch; }
+  .tasks-card__actions .btn { justify-content: center; }
+}
