@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login — Mood-Based To-Do App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Shared base variables come from index.css -->
+    <link rel="stylesheet" href="../Styles/index.css" />
+    <link rel="stylesheet" href="../Styles/login.css" />
+    <link rel="stylesheet" href="../Styles/loginForm.css" />
+  </head>
+  <body>
+    <div class="login-page">
+
+      <!-- Login Form Card -->
+      <div class="login-form-card">
+
+        <!-- Brand Logo -->
+        <div class="login-brand">
+          <div class="login-brand__logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+              <line x1="9" y1="9" x2="9.01" y2="9"/>
+              <line x1="15" y1="9" x2="15.01" y2="9"/>
+            </svg>
+          </div>
+          <span class="login-brand__name">MoodTask</span>
+        </div>
+
+        <hr class="login-divider" />
+
+        <!-- Form Header -->
+        <div class="login-form__header">
+          <h1 class="login-form__title">Welcome back</h1>
+          <p class="login-form__subtitle">Sign in to continue to your dashboard.</p>
+        </div>
+
+        <!-- Form Fields -->
+        <div class="login-form__fields">
+
+          <!-- Email Field -->
+          <div class="login-form__group">
+            <label for="login-email" class="login-form__label">Email / Username</label>
+            <div class="login-form__input-wrapper">
+              <input
+                type="email"
+                id="login-email"
+                name="email"
+                class="login-form__input"
+                placeholder="you@example.com"
+                autocomplete="email"
+              />
+              <span class="login-form__input-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                  <polyline points="22,6 12,13 2,6"/>
+                </svg>
+              </span>
+            </div>
+          </div>
+
+          <!-- Password Field -->
+          <div class="login-form__group">
+            <label for="login-password" class="login-form__label">Password</label>
+            <div class="login-form__input-wrapper">
+              <input
+                type="password"
+                id="login-password"
+                name="password"
+                class="login-form__input"
+                placeholder="••••••••••"
+                autocomplete="current-password"
+              />
+              <span class="login-form__input-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                  fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+              </span>
+            </div>
+            <div class="login-form__forgot-row">
+              <span class="login-form__forgot-link">Forgot password?</span>
+            </div>
+          </div>
+
+        </div>
+        <!-- end form fields -->
+
+        <!-- Submit -->
+        <button type="button" class="login-form__submit">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+            <polyline points="10 17 15 12 10 7"/>
+            <line x1="15" y1="12" x2="3" y2="12"/>
+          </svg>
+          Sign In
+        </button>
+
+        <hr class="login-divider" />
+
+        <!-- Footer -->
+        <div class="login-footer">
+          <p class="login-footer__text">
+            Don't have an account?
+            <span class="login-footer__link">Create one free</span>
+          </p>
+        </div>
+
+      </div>
+      <!-- end .login-form-card -->
+
+    </div>
+    <!-- end .login-page -->
+  </body>
+</html>

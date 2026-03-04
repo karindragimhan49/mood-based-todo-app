@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Create Task — Mood-Based To-Do App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../Styles/index.css" />
+    <link rel="stylesheet" href="../Styles/taskCreationForm.css" />
+  </head>
+  <body>
+    <div class="form-page">
+
+      <!-- ── Task Creation Card ── -->
+      <div class="creation-form-card">
+
+        <!-- Header -->
+        <div class="creation-form-card__header">
+          <h1 class="creation-form-card__title">Create New Task</h1>
+          <p class="creation-form-card__subtitle">Add a task to your today's planner.</p>
+        </div>
+
+        <!-- Fields -->
+        <div class="form-fields">
+
+          <!-- Task Title -->
+          <div class="form-group">
+            <label for="task-title" class="form-label">Task Title</label>
+            <input
+              type="text"
+              id="task-title"
+              name="task-title"
+              class="form-input"
+              placeholder="e.g. Morning Run"
+            />
+          </div>
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="task-description" class="form-label">Description</label>
+            <textarea
+              id="task-description"
+              name="task-description"
+              class="form-textarea"
+              placeholder="Add details about this task (optional)…"
+            ></textarea>
+          </div>
+
+          <!-- Duration -->
+          <div class="form-group">
+            <label for="task-duration" class="form-label">Duration (minutes)</label>
+            <input
+              type="number"
+              id="task-duration"
+              name="task-duration"
+              class="form-input"
+              placeholder="e.g. 30"
+              min="1"
+            />
+          </div>
+
+          <!-- Due Date -->
+          <div class="form-group">
+            <label for="task-date" class="form-label">Due Date</label>
+            <input
+              type="date"
+              id="task-date"
+              name="task-date"
+              class="form-input"
+            />
+          </div>
+
+        </div>
+        <!-- end .form-fields -->
+
+        <!-- Submit Button -->
+        <button type="button" class="form-submit-btn">
+          + Add Task
+        </button>
+
+      </div>
+      <!-- end .creation-form-card -->
+
+    </div>
+    <!-- end .form-page -->
+  </body>
+</html>

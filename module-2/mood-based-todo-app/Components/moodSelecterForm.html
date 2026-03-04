@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Select Mood — Mood-Based To-Do App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../Styles/index.css" />
+    <link rel="stylesheet" href="../Styles/moodSelecter.css" />
+  </head>
+  <body>
+    <div class="mood-page">
+
+      <!-- ── Mood Selector Card ── -->
+      <div class="mood-selector-card">
+
+        <!-- Header -->
+        <div class="mood-selector__header">
+          <h1 class="mood-selector__title">How are you feeling?</h1>
+          <p class="mood-selector__subtitle">
+            We'll suggest tasks that match your current mood and energy.
+          </p>
+        </div>
+
+        <!-- Mood Options -->
+        <div class="mood-options" role="group" aria-label="Select your mood">
+
+          <!-- Happy -->
+          <div class="mood-option" role="radio" aria-checked="false" tabindex="0" aria-label="Happy">
+            <span class="mood-option__emoji">😊</span>
+            <span class="mood-option__label">Happy</span>
+          </div>
+
+          <!-- Neutral (pre-selected) -->
+          <div class="mood-option mood-option--active" role="radio" aria-checked="true" tabindex="0" aria-label="Neutral">
+            <span class="mood-option__emoji">😐</span>
+            <span class="mood-option__label">Neutral</span>
+          </div>
+
+          <!-- Sad -->
+          <div class="mood-option" role="radio" aria-checked="false" tabindex="0" aria-label="Sad">
+            <span class="mood-option__emoji">😞</span>
+            <span class="mood-option__label">Sad</span>
+          </div>
+
+          <!-- Energized -->
+          <div class="mood-option" role="radio" aria-checked="false" tabindex="0" aria-label="Energized">
+            <span class="mood-option__emoji">⚡</span>
+            <span class="mood-option__label">Energized</span>
+          </div>
+
+          <!-- Tired -->
+          <div class="mood-option" role="radio" aria-checked="false" tabindex="0" aria-label="Tired">
+            <span class="mood-option__emoji">😴</span>
+            <span class="mood-option__label">Tired</span>
+          </div>
+
+          <!-- Focused -->
+          <div class="mood-option" role="radio" aria-checked="false" tabindex="0" aria-label="Focused">
+            <span class="mood-option__emoji">🎯</span>
+            <span class="mood-option__label">Focused</span>
+          </div>
+
+        </div>
+        <!-- end .mood-options -->
+
+        <!-- Confirm Button -->
+        <button type="button" class="mood-confirm-btn">
+          Confirm Mood
+        </button>
+
+      </div>
+      <!-- end .mood-selector-card -->
+
+    </div>
+    <!-- end .mood-page -->
+  </body>
+</html>

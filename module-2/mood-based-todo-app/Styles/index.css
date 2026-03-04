@@ -1,0 +1,370 @@
+/* ====================================================
+   index.css — Global Styles & Dashboard Layout
+   Mood-Based To-Do App
+   ==================================================== */
+
+/* ── CSS Custom Properties ────────────────────────── */
+:root {
+  /* Colors */
+  --color-bg-base:        #0e1117;
+  --color-bg-surface:     #161c27;
+  --color-bg-card:        #1a2130;
+  --color-bg-inner-card:  #1f2837;
+  --color-accent:         #a3ff12;
+  --color-accent-dim:     rgba(163, 255, 18, 0.12);
+  --color-accent-glow:    rgba(163, 255, 18, 0.25);
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #8b95a6;
+  --color-text-muted:     #5a6478;
+  --color-border:         rgba(255, 255, 255, 0.06);
+  --color-icon-bg:        rgba(255, 255, 255, 0.08);
+
+  /* Typography */
+  --font-family:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs:  0.688rem;   /* 11px */
+  --font-size-sm:  0.813rem;   /* 13px */
+  --font-size-md:  0.938rem;   /* 15px */
+  --font-size-lg:  1.063rem;   /* 17px */
+  --font-size-xl:  1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+
+  /* Layout */
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  20px;
+  --radius-xl:  28px;
+  --radius-pill: 100px;
+
+  /* Spacing (8px grid) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Shadows */
+  --shadow-card:     0 4px 24px rgba(0, 0, 0, 0.35),
+                     0 1px 4px  rgba(0, 0, 0, 0.25);
+  --shadow-accent:   0 0 18px var(--color-accent-glow);
+
+  /* Transitions */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ── Reset & Base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(145deg, #0a0e16 0%, #0e1420 40%, #111827 100%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol {
+  list-style: none;
+}
+
+img, svg {
+  display: block;
+}
+
+/* ── App Wrapper ──────────────────────────────────── */
+.app-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Navbar ───────────────────────────────────────── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+/* Navbar Left */
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navbar__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px var(--color-accent-glow),
+              0 0 0 4px var(--color-accent-dim);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar__inner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%,
+    rgba(163, 255, 18, 0.2) 0%,
+    rgba(163, 255, 18, 0.05) 60%,
+    transparent 100%);
+  border: 1.5px solid rgba(163, 255, 18, 0.4);
+  display: block;
+}
+
+.navbar__greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar__name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.navbar__role {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+/* Navbar Right */
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Mood Pill Button */
+.mood-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.mood-pill:hover {
+  border-color: rgba(163, 255, 18, 0.35);
+  background: var(--color-accent-dim);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+  color: var(--color-text-primary);
+}
+
+.mood-pill__emoji {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.mood-pill__label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+/* Icon Buttons */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: var(--color-accent-dim);
+  border-color: rgba(163, 255, 18, 0.4);
+  color: var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+/* ── Dashboard Grid ───────────────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.52fr;
+  gap: var(--space-6);
+  align-items: start;
+  flex: 1;
+}
+
+/* ── Shared Button Styles ─────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all var(--transition-normal);
+  letter-spacing: 0.01em;
+}
+
+.btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.btn--solid {
+  background: var(--color-accent);
+  border: 1.5px solid var(--color-accent);
+  color: #0a0e16;
+  font-weight: 700;
+}
+
+.btn--solid:hover {
+  background: #bcff4e;
+  border-color: #bcff4e;
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-1px);
+}
+
+.btn__icon {
+  font-size: 1.1em;
+  font-weight: 400;
+  line-height: 1;
+}
+
+/* ── Scrollbar Styling ────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(163, 255, 18, 0.25);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(163, 255, 18, 0.45);
+}
+
+/* ── Responsive ───────────────────────────────────── */
+
+/* Tablet (768px – 1199px) */
+@media (max-width: 1199px) {
+  .app-wrapper {
+    padding: var(--space-5) var(--space-5);
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+/* Mobile (<768px) */
+@media (max-width: 767px) {
+  .app-wrapper {
+    padding: var(--space-4) var(--space-4);
+    gap: var(--space-4);
+  }
+
+  .navbar {
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .navbar__name {
+    font-size: var(--font-size-lg);
+  }
+
+  .navbar__right {
+    gap: var(--space-2);
+  }
+
+  .mood-pill__label {
+    display: none;
+  }
+
+  .btn {
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--font-size-xs);
+  }
+}
+
+/* Very small screens */
+@media (max-width: 400px) {
+  .navbar__right .mood-pill {
+    display: none;
+  }
+}

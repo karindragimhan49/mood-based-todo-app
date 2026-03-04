@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Component — Mood-Based To-Do App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../Styles/index.css" />
+    <link rel="stylesheet" href="../Styles/tasksComponent.css" />
+    <style>
+      /* ── Standalone page wrapper for this component ── */
+      body {
+        min-height: 100vh;
+        background: linear-gradient(145deg, #0a0e16 0%, #0e1420 40%, #111827 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: var(--space-6);
+      }
+
+      /* Component demo container */
+      .component-demo {
+        width: 100%;
+        max-width: 480px;
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+      }
+
+      .component-demo__label {
+        font-size: var(--font-size-xs);
+        color: var(--color-text-muted);
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+
+      /* ── Extended Task Card with Edit/Delete actions ── */
+      .task-card--full {
+        flex-direction: column;
+        gap: 0;
+      }
+
+      .task-card__body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--color-border);
+        margin-bottom: var(--space-4);
+      }
+
+      .task-card__description {
+        font-size: var(--font-size-sm);
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+      }
+
+      .task-card__footer {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+      }
+
+      .task-action-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-2);
+        padding: var(--space-2) var(--space-3);
+        border-radius: var(--radius-pill);
+        font-size: var(--font-size-xs);
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        cursor: pointer;
+        transition: all var(--transition-normal);
+        font-family: var(--font-family);
+        border: 1.5px solid transparent;
+      }
+
+      /* Edit Button */
+      .task-action-btn--edit {
+        background: rgba(90, 120, 255, 0.1);
+        border-color: rgba(90, 120, 255, 0.3);
+        color: #7a96ff;
+      }
+      .task-action-btn--edit:hover {
+        background: rgba(90, 120, 255, 0.18);
+        border-color: rgba(90, 120, 255, 0.55);
+        box-shadow: 0 0 10px rgba(90, 120, 255, 0.25);
+      }
+
+      /* Complete Button */
+      .task-action-btn--complete {
+        background: rgba(163, 255, 18, 0.1);
+        border-color: rgba(163, 255, 18, 0.35);
+        color: var(--color-accent);
+      }
+      .task-action-btn--complete:hover {
+        background: rgba(163, 255, 18, 0.18);
+        border-color: var(--color-accent);
+        box-shadow: 0 0 10px var(--color-accent-glow);
+      }
+
+      /* Delete Button */
+      .task-action-btn--delete {
+        background: rgba(255, 70, 70, 0.1);
+        border-color: rgba(255, 70, 70, 0.3);
+        color: #ff6b6b;
+      }
+      .task-action-btn--delete:hover {
+        background: rgba(255, 70, 70, 0.18);
+        border-color: rgba(255, 70, 70, 0.55);
+        box-shadow: 0 0 10px rgba(255, 70, 70, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="component-demo">
+
+      <span class="component-demo__label">Task Component</span>
+
+      <!-- ── Task Card with full controls ── -->
+      <div class="task-card task-card--full">
+
+        <div class="task-card__body">
+          <!-- Top row: title + check -->
+          <div class="task-card__top">
+            <span class="task-card__title">Run a 5K This Morning</span>
+            <span class="task-card__check" aria-label="Completed">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+                fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+            </span>
+          </div>
+
+          <!-- Optional description -->
+          <p class="task-card__description">
+            Put on your running shoes and go for a 5K in the park. Start slow,
+            find your pace, and enjoy the fresh morning air.
+          </p>
+
+          <!-- Duration & time -->
+          <p class="task-card__duration">45 mins</p>
+          <p class="task-card__time">7:00 AM</p>
+        </div>
+
+        <!-- Action buttons -->
+        <div class="task-card__footer">
+          <button class="task-action-btn task-action-btn--edit" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Edit
+          </button>
+
+          <button class="task-action-btn task-action-btn--complete" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+            Complete
+          </button>
+
+          <button class="task-action-btn task-action-btn--delete" type="button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+              fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"/>
+              <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+              <path d="M10 11v6"/>
+              <path d="M14 11v6"/>
+              <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+            </svg>
+            Delete
+          </button>
+        </div>
+
+      </div>
+      <!-- end task-card -->
+
+    </div>
+    <!-- end .component-demo -->
+  </body>
+</html>
