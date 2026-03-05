@@ -1,0 +1,29 @@
+{{!-- moodModal.hbs --}}
+<div class="modal-overlay" id="mood-modal" role="dialog" aria-modal="true" aria-labelledby="mood-modal-title">
+  <div class="modal-card mood-modal-card">
+    <div class="modal-card__header">
+      <h3 class="modal-card__title" id="mood-modal-title">How are you feeling?</h3>
+      <button class="modal-card__close" id="close-mood-modal" aria-label="Close mood modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <p class="modal-form__hero-sub" style="text-align:center;margin-top:-8px;">
+      Pick your mood to get personalised task suggestions
+    </p>
+
+    <div class="mood-options" id="mood-options">
+      <button class="mood-option" data-mood="Happy"     data-emoji="😄"><span class="mood-option__emoji">😄</span><span class="mood-option__label">Happy</span></button>
+      <button class="mood-option" data-mood="Calm"      data-emoji="😌"><span class="mood-option__emoji">😌</span><span class="mood-option__label">Calm</span></button>
+      <button class="mood-option" data-mood="Neutral"   data-emoji="😐"><span class="mood-option__emoji">😐</span><span class="mood-option__label">Neutral</span></button>
+      <button class="mood-option" data-mood="Sad"       data-emoji="😔"><span class="mood-option__emoji">😔</span><span class="mood-option__label">Sad</span></button>
+      <button class="mood-option" data-mood="Stressed"  data-emoji="😤"><span class="mood-option__emoji">😤</span><span class="mood-option__label">Stressed</span></button>
+      <button class="mood-option" data-mood="Energized" data-emoji="⚡"><span class="mood-option__emoji">⚡</span><span class="mood-option__label">Energized</span></button>
+    </div>
+
+    <button class="modal-submit-btn" id="confirm-mood-btn" disabled>Confirm Mood</button>
+  </div>
+</div>

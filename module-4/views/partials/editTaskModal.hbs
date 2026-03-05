@@ -1,0 +1,36 @@
+{{!-- editTaskModal.hbs --}}
+<div class="modal-overlay" id="edit-task-modal" role="dialog" aria-modal="true" aria-labelledby="edit-task-modal-title">
+  <div class="modal-card">
+    <div class="modal-card__header">
+      <h3 class="modal-card__title" id="edit-task-modal-title">Edit Task</h3>
+      <button class="modal-card__close" id="close-edit-task-modal" aria-label="Close edit task modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Hidden field holds the id of the task being edited -->
+    <input type="hidden" id="edit-task-id" />
+
+    <form id="edit-task-form" novalidate>
+      <div class="form-field">
+        <input type="text" id="edit-task-name" class="field-input" placeholder=" " />
+        <label for="edit-task-name" class="field-label">Task name</label>
+        <span class="field-error" id="edit-task-name-error"></span>
+      </div>
+      <div class="form-field">
+        <input type="number" id="edit-task-duration" class="field-input" placeholder=" " min="1" />
+        <label for="edit-task-duration" class="field-label">Duration (in minutes)</label>
+        <span class="field-error" id="edit-task-duration-error"></span>
+      </div>
+      <div class="form-field">
+        <input type="time" id="edit-task-time" class="field-input field-input--time" />
+        <label for="edit-task-time" class="field-label field-label--time">Time</label>
+        <span class="field-error" id="edit-task-time-error"></span>
+      </div>
+      <button type="submit" class="modal-submit-btn">Save Changes</button>
+    </form>
+  </div>
+</div>

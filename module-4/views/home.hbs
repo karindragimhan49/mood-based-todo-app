@@ -1,0 +1,140 @@
+<!-- ===== TOP NAVBAR ===== -->
+<header class="navbar">
+  <div class="navbar__left">
+    <div class="navbar__avatar">
+      <span class="avatar__inner"></span>
+    </div>
+    <div class="navbar__greeting">
+      <h2 class="navbar__name" id="user-welcome">Welcome</h2>
+      <p class="navbar__role" id="user-email">Guest.</p>
+    </div>
+  </div>
+
+  <div class="navbar__right">
+    <!-- Weather button — clicking it opens the weather modal -->
+    <button class="icon-btn" id="weather-btn" aria-label="Current weather" title="Current weather">
+      <svg id="weather-nav-icon" xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+        viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <!-- Default: cloud icon; JS swaps this based on the live condition -->
+        <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+      </svg>
+    </button>
+
+    <button class="mood-pill" id="mood-btn" aria-label="Select mood">
+      <span class="mood-pill__emoji" id="mood-emoji">😐</span>
+      <span class="mood-pill__label">Mood:</span>
+      <span class="mood-pill__value" id="mood-label">Neutral</span>
+    </button>
+
+    <button class="icon-btn" aria-label="Notifications">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+      </svg>
+    </button>
+
+    <button class="icon-btn" id="profile-btn" aria-label="Profile">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+        <circle cx="12" cy="7" r="4"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ===== MAIN GRID ===== -->
+<main class="dashboard-grid">
+
+  <!-- ===== LEFT COLUMN ===== -->
+  <section class="col-left">
+
+    <!-- ── Active tasks card ───────────────────────────── -->
+    <div class="tasks-card">
+      <div class="tasks-card__header">
+        <div class="tasks-card__titles">
+          <h1 class="tasks-card__title">Ready for Today?</h1>
+          <p class="tasks-card__subtitle" id="task-count-label">You have 0 tasks planned for today</p>
+        </div>
+        <div class="tasks-card__actions">
+          <button class="btn btn--outline" id="add-task-btn">
+            <span class="btn__icon">+</span> Add Task
+          </button>
+          <button class="btn btn--solid" id="complete-all-btn">Complete All</button>
+          <button class="btn btn--solid" id="show-completed-btn">Show Completed</button>
+        </div>
+      </div>
+
+      <!-- Active task cards injected by JS -->
+      <div class="task-grid" id="task-grid">
+        <p class="tasks-empty" id="tasks-empty-msg">
+          No tasks yet — click <strong>+ Add Task</strong> to get started.
+        </p>
+      </div>
+    </div>
+
+    <!-- ── Completed tasks card (hidden by default) ───── -->
+    <div class="tasks-card tasks-card--completed" id="completed-section" style="display:none; margin-top: 1.5rem;">
+      <div class="tasks-card__header">
+        <div class="tasks-card__titles">
+          <h2 class="tasks-card__title" style="color: var(--accent, #b3ff00); font-size: 1.1rem;">
+            Completed tasks
+          </h2>
+        </div>
+      </div>
+
+      <!-- Completed task cards injected by JS -->
+      <div class="task-grid task-grid--completed" id="completed-grid">
+        <p class="tasks-empty" id="completed-empty-msg">No completed tasks yet.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ===== RIGHT COLUMN ===== -->
+  <aside class="col-right">
+    <div class="suggested-card">
+      <h2 class="suggested-card__title">Suggested tasks</h2>
+
+      <!-- Populated by suggestedTaskComponent.js based on mood & weather -->
+      <div id="suggestions-list">
+        {{> suggestedCard
+          iconType="mood"
+          emojiId="suggestion-mood-emoji"
+          defaultEmoji="😐"
+          name="Read a Book"
+          duration="45"
+          time="05:30 PM"
+          timeValue="17:30"
+          basedOn="Mood"
+          basedClass="mood"
+        }}
+
+        {{> suggestedCard
+          iconType="weather"
+          name="Meditation"
+          duration="15"
+          time="06:00 PM"
+          timeValue="18:00"
+          basedOn="Weather"
+          basedClass="weather"
+        }}
+      </div>
+    </div>
+  </aside>
+
+</main>
+
+<!-- ============================================================
+     MODAL OVERLAYS
+     All modals are hidden by default (.is-open added by JS).
+============================================================ -->
+
+{{> loginModal}}
+{{> profileModal}}
+{{> addTaskModal}}
+{{> editTaskModal}}
+{{> moodModal}}
+{{> weatherModal}}

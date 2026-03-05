@@ -1,0 +1,53 @@
+{{!--
+  suggestedCard.hbs — A single suggested-task card.
+  Context properties:
+    iconType   : "mood" | "weather"
+    emojiId    : (optional) id for the mood emoji span
+    defaultEmoji : (optional) default emoji text
+    name       : task title
+    duration   : minutes string
+    time       : formatted time string (e.g. "05:30 PM")
+    timeValue  : 24-hr time value (e.g. "17:30")
+    basedOn    : "Mood" | "Weather"
+    basedClass : "mood" | "weather"
+--}}
+<div class="suggestion-item">
+  <div class="suggestion-item__body">
+
+    <!-- Icon -->
+    <div class="suggestion-item__icon suggestion-item__icon--{{iconType}}" aria-label="{{iconType}} icon">
+      {{#if (eq iconType "mood")}}
+        <span id="{{emojiId}}">{{defaultEmoji}}</span>
+      {{else}}
+        {{!-- Default weather / cloud SVG; JS will update with live icon --}}
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="1.8"
+          stroke-linecap="round" stroke-linejoin="round" id="suggestion-weather-icon">
+          <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+        </svg>
+      {{/if}}
+    </div>
+
+    <!-- Info -->
+    <div class="suggestion-item__info">
+      <h3 class="suggestion-item__name" id="suggestion-{{basedClass}}-name">{{name}}</h3>
+      <p class="suggestion-item__duration" id="suggestion-{{basedClass}}-duration">{{duration}} mins</p>
+      <p class="suggestion-item__time" id="suggestion-{{basedClass}}-time">{{time}}</p>
+    </div>
+
+    <!-- Meta -->
+    <div class="suggestion-item__meta">
+      <span class="suggestion-item__based">Based on</span>
+      <span class="suggestion-item__keyword suggestion-item__keyword--{{basedClass}}">{{basedOn}}</span>
+      <button class="suggestion-item__check" aria-label="Add suggestion as task"
+        data-title="{{name}}" data-duration="{{duration}}" data-time="{{timeValue}}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </button>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,64 @@
+{{!--
+  weatherModal.hbs — Current Weather modal.
+  Populated entirely by JS after fetching /api/weather.
+--}}
+<div class="modal-overlay" id="weather-modal" role="dialog" aria-modal="true" aria-labelledby="weather-modal-title">
+  <div class="modal-card weather-modal-card">
+
+    <!-- Header -->
+    <div class="modal-card__header">
+      <h3 class="modal-card__title" id="weather-modal-title">Current Weather</h3>
+      <button class="modal-card__close" id="close-weather-modal" aria-label="Close weather modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Body — JS writes into these elements once data is fetched -->
+    <div class="weather-modal__body">
+
+      <!-- Weather icon from WeatherAPI (img tag) -->
+      <div class="weather-modal__icon-wrap">
+        <img id="weather-icon-img" src="" alt="Weather icon" width="64" height="64" />
+      </div>
+
+      <!-- Temperature -->
+      <p class="weather-modal__temp" id="weather-temp">--°C</p>
+
+      <!-- Condition text -->
+      <p class="weather-modal__condition" id="weather-condition">Loading…</p>
+
+      <!-- Humidity row -->
+      <div class="weather-modal__detail">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>
+        </svg>
+        <span>Humidity:</span>
+        <strong id="weather-humidity">--%</strong>
+      </div>
+
+      <!-- Location -->
+      <div class="weather-modal__detail">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/>
+          <circle cx="12" cy="10" r="3"/>
+        </svg>
+        <span id="weather-location">Detecting location…</span>
+      </div>
+
+      <!-- Error state (hidden by default) -->
+      <p class="weather-modal__error" id="weather-error" style="display:none;">
+        Unable to load weather data.
+      </p>
+
+    </div>
+  </div>
+</div>

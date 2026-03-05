@@ -1,0 +1,38 @@
+{{!-- loginModal.hbs --}}
+<div class="modal-overlay" id="login-modal" role="dialog" aria-modal="true" aria-labelledby="login-modal-title">
+  <div class="modal-card">
+    <div class="modal-card__header">
+      <h3 class="modal-card__title" id="login-modal-title">Login</h3>
+      <button class="modal-card__close" id="close-login-modal" aria-label="Close login modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-form__hero">
+      <h2 class="modal-form__hero-title">Welcome Back !</h2>
+      <p class="modal-form__hero-sub">Please enter your details to login</p>
+    </div>
+
+    <form id="login-form" novalidate>
+      <div class="form-field">
+        <input type="text" id="login-name" class="field-input" placeholder=" " autocomplete="name" />
+        <label for="login-name" class="field-label">Name</label>
+        <span class="field-error" id="login-name-error"></span>
+      </div>
+      <div class="form-field">
+        <input type="email" id="login-email" class="field-input" placeholder=" " autocomplete="email" />
+        <label for="login-email" class="field-label">Email</label>
+        <span class="field-error" id="login-email-error"></span>
+      </div>
+      <div class="form-field">
+        <input type="password" id="login-password" class="field-input" placeholder=" " autocomplete="current-password" />
+        <label for="login-password" class="field-label">Password</label>
+        <span class="field-error" id="login-password-error"></span>
+      </div>
+      <button type="submit" class="modal-submit-btn">Login</button>
+    </form>
+  </div>
+</div>

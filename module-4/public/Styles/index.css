@@ -1,0 +1,705 @@
+/* ====================================================
+   index.css — Global Styles, Layout, Modals & Toasts
+   Mood-Based To-Do App — Module 3
+   ==================================================== */
+
+/* ── CSS Custom Properties ────────────────────────── */
+:root {
+  /* Colors */
+  --color-bg-base:        #0e1117;
+  --color-bg-surface:     #161c27;
+  --color-bg-card:        #1a2130;
+  --color-bg-inner-card:  #1f2837;
+  --color-accent:         #a3ff12;
+  --color-accent-dim:     rgba(163, 255, 18, 0.12);
+  --color-accent-glow:    rgba(163, 255, 18, 0.25);
+  --color-text-primary:   #ffffff;
+  --color-text-secondary: #8b95a6;
+  --color-text-muted:     #5a6478;
+  --color-border:         rgba(255, 255, 255, 0.06);
+  --color-icon-bg:        rgba(255, 255, 255, 0.08);
+  --color-error:          #e74c3c;
+  --color-danger:         #c0392b;
+
+  /* Typography */
+  --font-family:   'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-xs:  0.688rem;   /* 11px */
+  --font-size-sm:  0.813rem;   /* 13px */
+  --font-size-md:  0.938rem;   /* 15px */
+  --font-size-lg:  1.063rem;   /* 17px */
+  --font-size-xl:  1.25rem;    /* 20px */
+  --font-size-2xl: 1.5rem;     /* 24px */
+
+  /* Layout */
+  --radius-sm:   8px;
+  --radius-md:   14px;
+  --radius-lg:   20px;
+  --radius-xl:   28px;
+  --radius-pill: 100px;
+
+  /* Spacing (8px grid) */
+  --space-1:  4px;
+  --space-2:  8px;
+  --space-3:  12px;
+  --space-4:  16px;
+  --space-5:  20px;
+  --space-6:  24px;
+  --space-7:  28px;
+  --space-8:  32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Shadows */
+  --shadow-card:     0 4px 24px rgba(0, 0, 0, 0.35),
+                     0 1px 4px  rgba(0, 0, 0, 0.25);
+  --shadow-accent:   0 0 18px var(--color-accent-glow);
+
+  /* Transitions */
+  --transition-fast:   150ms ease;
+  --transition-normal: 250ms ease;
+}
+
+/* ── Reset & Base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-family);
+  background: linear-gradient(145deg, #0a0e16 0%, #0e1420 40%, #111827 100%);
+  background-attachment: fixed;
+  color: var(--color-text-primary);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a { color: inherit; text-decoration: none; }
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+ul, ol { list-style: none; }
+
+img, svg { display: block; }
+
+/* ── App Wrapper ──────────────────────────────────── */
+.app-wrapper {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-6);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ── Navbar ───────────────────────────────────────── */
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
+}
+
+.navbar__left {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navbar__avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 2.5px solid var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 12px var(--color-accent-glow),
+              0 0 0 4px var(--color-accent-dim);
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar__inner {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%,
+    rgba(163, 255, 18, 0.2) 0%,
+    rgba(163, 255, 18, 0.05) 60%,
+    transparent 100%);
+  border: 1.5px solid rgba(163, 255, 18, 0.4);
+  display: block;
+}
+
+.navbar__greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.navbar__name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  line-height: 1.2;
+}
+
+.navbar__role {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 400;
+}
+
+/* Navbar Right */
+.navbar__right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* Mood Pill */
+.mood-pill {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-pill);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  transition: border-color var(--transition-fast),
+              background var(--transition-fast),
+              box-shadow var(--transition-fast);
+}
+
+.mood-pill:hover {
+  border-color: rgba(163, 255, 18, 0.35);
+  background: var(--color-accent-dim);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+  color: var(--color-text-primary);
+}
+
+.mood-pill__emoji { font-size: 1.1rem; line-height: 1; }
+
+.mood-pill__label {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.03em;
+  color: var(--color-text-muted);
+}
+
+.mood-pill__value {
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+/* Icon Buttons */
+.icon-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast),
+              box-shadow var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.icon-btn:hover {
+  background: var(--color-accent-dim);
+  border-color: rgba(163, 255, 18, 0.4);
+  color: var(--color-accent);
+  box-shadow: 0 0 12px var(--color-accent-glow);
+}
+
+/* ── Dashboard Grid ───────────────────────────────── */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr 0.52fr;
+  gap: var(--space-6);
+  align-items: start;
+  flex: 1;
+}
+
+/* ── Shared Button Styles ─────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-pill);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  transition: all var(--transition-normal);
+  letter-spacing: 0.01em;
+}
+
+.btn--outline {
+  background: transparent;
+  border: 1.5px solid var(--color-border);
+  color: var(--color-text-secondary);
+}
+
+.btn--outline:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-accent-dim);
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
+.btn--solid {
+  background: var(--color-accent);
+  border: 1.5px solid var(--color-accent);
+  color: #0a0e16;
+  font-weight: 700;
+}
+
+.btn--solid:hover {
+  background: #bcff4e;
+  border-color: #bcff4e;
+  box-shadow: var(--shadow-accent);
+  transform: translateY(-1px);
+}
+
+.btn__icon { font-size: 1.1em; font-weight: 400; line-height: 1; }
+
+/* ── Empty State ──────────────────────────────────── */
+.tasks-empty {
+  grid-column: 1 / -1;
+  padding: var(--space-8) var(--space-6);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-sm);
+  border: 1px dashed rgba(255,255,255,0.08);
+  border-radius: var(--radius-md);
+}
+
+.tasks-empty strong {
+  color: var(--color-accent);
+  font-weight: 600;
+}
+
+/* ============================================================
+   MODAL OVERLAY — Base (shared by all modals)
+   JavaScript adds/removes the .is-open class to show/hide.
+============================================================ */
+.modal-overlay {
+  display: none;         /* hidden by default */
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: rgba(6, 8, 16, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.modal-overlay.is-open {
+  display: flex;
+  animation: overlayFadeIn 200ms ease forwards;
+}
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ── Modal Card (shared container) ───────────────── */
+.modal-card {
+  background: var(--color-bg-surface);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  padding: var(--space-7);
+  width: 100%;
+  max-width: 480px;
+  box-shadow:
+    0 32px 72px rgba(0, 0, 0, 0.6),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+  position: relative;
+  animation: cardSlideUp 280ms cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+}
+
+/* Top accent line */
+.modal-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: var(--space-7);
+  right: var(--space-7);
+  height: 2px;
+  background: linear-gradient(90deg,
+    transparent 0%, var(--color-accent) 40%, transparent 100%);
+  border-radius: 1px;
+}
+
+@keyframes cardSlideUp {
+  from { opacity: 0; transform: translateY(18px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Modal Header ─────────────────────────────────── */
+.modal-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-1);
+}
+
+.modal-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: -0.01em;
+}
+
+.modal-card__close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  flex-shrink: 0;
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.modal-card__close:hover {
+  background: rgba(255, 70, 70, 0.12);
+  border-color: rgba(255, 70, 70, 0.35);
+  color: #ff6b6b;
+}
+
+/* ── Modal Form Hero (Login welcome text) ─────────── */
+.modal-form__hero {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-bottom: var(--space-2);
+}
+
+.modal-form__hero-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+}
+
+.modal-form__hero-sub {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* ── Floating Label Inputs (shared by all modals) ─── */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.form-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.field-input {
+  width: 100%;
+  padding: 22px var(--space-4) var(--space-3);
+  background: var(--color-bg-inner-card);
+  border: 1.5px solid rgba(255, 255, 255, 0.09);
+  border-radius: var(--radius-md);
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+  outline: none;
+  transition: border-color var(--transition-fast),
+              box-shadow var(--transition-fast),
+              background var(--transition-fast);
+  /* Remove default number spinners for cleaner look */
+  -moz-appearance: textfield;
+}
+
+.field-input::-webkit-outer-spin-button,
+.field-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.field-input:focus {
+  border-color: rgba(163, 255, 18, 0.55);
+  background: rgba(163, 255, 18, 0.03);
+  box-shadow: 0 0 0 3px rgba(163, 255, 18, 0.1);
+}
+
+.field-input.is-invalid {
+  border-color: rgba(231, 76, 60, 0.65);
+}
+
+.field-input.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.12);
+}
+
+/* Floating Label */
+.field-label {
+  position: absolute;
+  left: var(--space-4);
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  pointer-events: none;
+  transition: top 0.18s ease,
+              transform 0.18s ease,
+              font-size 0.18s ease,
+              color 0.18s ease,
+              letter-spacing 0.18s ease;
+  background: transparent;
+  line-height: 1;
+}
+
+/* Float the label up when input has content or is focused */
+.field-input:focus ~ .field-label,
+.field-input:not(:placeholder-shown) ~ .field-label {
+  top: 9px;
+  transform: none;
+  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+/* Time input — label always floated since placeholder trick doesn't work on <input type="time"> */
+.field-label--time {
+  top: 9px;
+  transform: none;
+  font-size: 0.625rem;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.field-input--time {
+  padding-top: 20px;
+  color-scheme: dark;
+}
+
+/* Time picker icon */
+.field-input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.5);
+  cursor: pointer;
+}
+
+/* Validation error message */
+.field-error {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.75rem;
+  color: var(--color-error);
+  font-weight: 500;
+  margin-top: 5px;
+  padding-left: 2px;
+}
+
+.field-error.visible {
+  display: flex;
+}
+
+/* ── Modal Submit Buttons ─────────────────────────── */
+.modal-submit-btn {
+  width: 100%;
+  padding: var(--space-4) var(--space-6);
+  background: var(--color-accent);
+  color: #0a0e16;
+  font-family: var(--font-family);
+  font-size: var(--font-size-md);
+  font-weight: 700;
+  border: none;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  margin-top: var(--space-1);
+  transition: background var(--transition-normal),
+              box-shadow var(--transition-normal),
+              transform var(--transition-fast);
+}
+
+.modal-submit-btn:hover {
+  background: #bcff4e;
+  box-shadow: 0 0 22px var(--color-accent-glow),
+              0 4px 14px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+.modal-submit-btn:active {
+  transform: translateY(0);
+}
+
+.modal-submit-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.modal-submit-btn--danger {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.modal-submit-btn--danger:hover {
+  background: #e74c3c;
+  box-shadow: 0 0 18px rgba(192, 57, 43, 0.4),
+              0 4px 14px rgba(0, 0, 0, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ── Mood modal wider card ────────────────────────── */
+.mood-modal-card {
+  max-width: 560px;
+}
+
+/* ============================================================
+   TOAST NOTIFICATIONS — fixed bottom-left
+============================================================ */
+#toast-container {
+  position: fixed;
+  bottom: var(--space-6);
+  left: var(--space-6);
+  z-index: 9999;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: var(--space-3);
+  pointer-events: none;
+  max-width: 340px;
+}
+
+.toast {
+  background: var(--color-bg-surface);
+  border: 1px solid rgba(163, 255, 18, 0.2);
+  border-left: 3px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45);
+  pointer-events: all;
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  animation: toastSlideIn 300ms cubic-bezier(0.34, 1.3, 0.64, 1) forwards;
+}
+
+.toast--exit {
+  animation: toastSlideOut 280ms ease forwards;
+}
+
+.toast--error {
+  border-left-color: var(--color-error);
+  border-color: rgba(231, 76, 60, 0.2);
+}
+
+@keyframes toastSlideIn {
+  from { opacity: 0; transform: translateX(-24px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastSlideOut {
+  from { opacity: 1; transform: translateX(0); }
+  to   { opacity: 0; transform: translateX(-20px); }
+}
+
+.toast__icon {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.toast__text {
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* ── Scrollbar Styling ────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--color-bg-base); }
+::-webkit-scrollbar-thumb {
+  background: rgba(163, 255, 18, 0.25);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(163, 255, 18, 0.45);
+}
+
+/* ── Responsive ───────────────────────────────────── */
+@media (max-width: 1199px) {
+  .app-wrapper { padding: var(--space-5); }
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+}
+
+@media (max-width: 767px) {
+  .app-wrapper { padding: var(--space-4); gap: var(--space-4); }
+  .navbar {
+    border-radius: var(--radius-lg);
+    padding: var(--space-3) var(--space-4);
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+  .navbar__name { font-size: var(--font-size-lg); }
+  .navbar__right { gap: var(--space-2); }
+  .mood-pill__label { display: none; }
+  .btn { padding: var(--space-2) var(--space-3); font-size: var(--font-size-xs); }
+  .modal-card { padding: var(--space-5); gap: var(--space-4); }
+  #toast-container { left: var(--space-4); bottom: var(--space-4); right: var(--space-4); max-width: 100%; }
+}
+
+@media (max-width: 400px) {
+  .navbar__right .mood-pill { display: none; }
+}

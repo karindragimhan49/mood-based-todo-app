@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{title}}</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Stylesheets (served from public/Styles/) -->
+    <link rel="stylesheet" href="/Styles/index.css" />
+    <link rel="stylesheet" href="/Styles/tasksComponent.css" />
+    <link rel="stylesheet" href="/Styles/suggestedTaskComponent.css" />
+    <link rel="stylesheet" href="/Styles/loginForm.css" />
+    <link rel="stylesheet" href="/Styles/taskCreationForm.css" />
+    <link rel="stylesheet" href="/Styles/moodSelecter.css" />
+    <link rel="stylesheet" href="/Styles/weatherModal.css" />
+  </head>
+  <body>
+    <div class="app-wrapper">
+
+      {{{body}}}
+
+    </div><!-- end .app-wrapper -->
+
+    <!-- ===== TOAST CONTAINER ===== -->
+    <div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- ===== SCRIPTS (ES Modules, served from public/Scripts/) ===== -->
+    <script type="module" src="/Scripts/index.js"></script>
+  </body>
+</html>

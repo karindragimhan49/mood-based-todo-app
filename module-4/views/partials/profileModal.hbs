@@ -1,0 +1,29 @@
+{{!-- profileModal.hbs --}}
+<div class="modal-overlay" id="profile-modal" role="dialog" aria-modal="true" aria-labelledby="profile-modal-title">
+  <div class="modal-card">
+    <div class="modal-card__header">
+      <h3 class="modal-card__title" id="profile-modal-title">Profile Settings</h3>
+      <button class="modal-card__close" id="close-profile-modal" aria-label="Close profile modal">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <form id="profile-form" novalidate>
+      <div class="form-field">
+        <input type="text" id="profile-name" class="field-input" placeholder=" " autocomplete="name" />
+        <label for="profile-name" class="field-label">Name</label>
+        <span class="field-error" id="profile-name-error"></span>
+      </div>
+      <div class="form-field">
+        <input type="email" id="profile-email" class="field-input" placeholder=" " autocomplete="email" />
+        <label for="profile-email" class="field-label">Email</label>
+        <span class="field-error" id="profile-email-error"></span>
+      </div>
+      <button type="submit" class="modal-submit-btn">Save Changes</button>
+      <button type="button" class="modal-submit-btn modal-submit-btn--danger" id="logout-btn">Logout</button>
+    </form>
+  </div>
+</div>

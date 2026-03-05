@@ -1,0 +1,40 @@
+{{!--
+  taskCard.hbs — Reusable task card partial.
+  Context properties expected:
+    id, title, duration, time, completed
+  Note: In Module 4 the cards are built dynamically in JS,
+        so this partial serves as a reference template only.
+        JS clones this structure via buildTaskCard().
+--}}
+<div class="task-card{{#if completed}} task-card--done{{/if}}" data-id="{{id}}">
+  <div class="task-card__top">
+    <span class="task-card__title">{{title}}</span>
+    <div class="task-card__controls">
+
+      <!-- Delete button -->
+      <button class="task-card__delete" aria-label="Delete task" title="Delete task">
+        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </button>
+
+      <!-- Complete toggle -->
+      <button class="task-card__check{{#if completed}} task-card__check--done{{/if}}"
+        aria-label="{{#if completed}}Mark incomplete{{else}}Mark complete{{/if}}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+  <p class="task-card__duration">{{duration}} mins</p>
+  <p class="task-card__time">{{time}}</p>
+</div>

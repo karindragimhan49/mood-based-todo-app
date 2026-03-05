@@ -1,0 +1,56 @@
+/* ====================================================
+   weatherModal.css — Styles for the Weather Modal
+   Mood-Based To-Do App — Module 4
+   ==================================================== */
+
+.weather-modal-card {
+  max-width: 340px;
+  text-align: center;
+}
+
+.weather-modal__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 0 0.5rem;
+}
+
+.weather-modal__icon-wrap img {
+  width: 64px;
+  height: 64px;
+  object-fit: contain;
+}
+
+.weather-modal__temp {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: #b3ff00;
+  margin: 0;
+  line-height: 1;
+}
+
+.weather-modal__condition {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.weather-modal__detail {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #aaa;
+}
+
+.weather-modal__detail strong {
+  color: #fff;
+}
+
+.weather-modal__error {
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}

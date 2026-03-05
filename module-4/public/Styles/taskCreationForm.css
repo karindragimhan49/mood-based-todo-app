@@ -1,0 +1,32 @@
+/* ====================================================
+   taskCreationForm.css — Add Task & Edit Task Modals
+   Mood-Based To-Do App — Module 3
+   (Modal overlay base is in index.css)
+   ==================================================== */
+
+/* The .modal-overlay and .modal-card base styles are defined in index.css.
+   The shared .form-field, .field-input, .field-label, .field-error styles
+   are also in index.css.
+
+   This file handles any specific overrides for the task forms.
+   ─────────────────────────────────────────────────── */
+
+/* Slightly wider card for the task forms */
+#add-task-modal .modal-card,
+#edit-task-modal .modal-card {
+  max-width: 500px;
+}
+
+/* Number input — show the browser spinner on focus for usability */
+#new-task-duration:focus,
+#edit-task-duration:focus {
+  -moz-appearance: number-input;
+}
+
+#new-task-duration::-webkit-outer-spin-button,
+#new-task-duration::-webkit-inner-spin-button,
+#edit-task-duration::-webkit-outer-spin-button,
+#edit-task-duration::-webkit-inner-spin-button {
+  -webkit-appearance: auto;
+  opacity: 0.5;
+}

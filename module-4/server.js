@@ -1,59 +1,61 @@
+/* ====================================================
+   server.js — Express + Handlebars Backend
+   Mood-Based To-Do App — Module 4
+   ==================================================== */
+
 'use strict';
 
-require('dotenv').config();
-const express    = require('express');
+const path    = require('path');
+const express = require('express');
 const { engine } = require('express-handlebars');
-const path       = require('path');
-const axios      = require('axios');
+require('dotenv').config();
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
 
-/* ─────────────────────────────────────────────────────────────
-   HANDLEBARS ENGINE
-───────────────────────────────────────────────────────────────*/
-app.engine(
-  'handlebars',
-  engine({
-    layoutsDir:  path.join(__dirname, 'views', 'layouts'),
-    partialsDir: path.join(__dirname, 'views', 'partials'),
-    defaultLayout: 'main',
-    helpers: {
-      /* e.g. {{eq a b}} for conditionals in templates */
-      eq: (a, b) => a === b,
-      ne: (a, b) => a !== b,
-      or: (a, b) => a || b,
-      and:(a, b) => a && b,
-      json: (ctx) => JSON.stringify(ctx),
-    },
-  })
-);
-app.set('view engine', 'handlebars');
+// ── View Engine ────────────────────────────────────────────────
+
+app.engine('hbs', engine({
+  extname:        '.hbs',
+  defaultLayout:  'main',
+  layoutsDir:     path.join(__dirname, 'views', 'layouts'),
+  partialsDir:    path.join(__dirname, 'views', 'partials'),
+  helpers: {
+    // Equality check: {{#if (eq a b)}} … {{/if}}
+    eq: (a, b) => a === b,
+  },
+}));
+
+app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'views'));
 
-/* ─────────────────────────────────────────────────────────────
-   MIDDLEWARE
-───────────────────────────────────────────────────────────────*/
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+// ── Static Files ───────────────────────────────────────────────
+
+// Serve CSS and JS from public/
 app.use(express.static(path.join(__dirname, 'public')));
 
-/* ─────────────────────────────────────────────────────────────
-   ROUTES
-───────────────────────────────────────────────────────────────*/
+// ── Middleware ─────────────────────────────────────────────────
 
-/* Home — render the main dashboard */
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+// ── Routes ─────────────────────────────────────────────────────
+
+/**
+ * GET /
+ * Renders the main dashboard (home.hbs inside layouts/main.hbs).
+ */
 app.get('/', (req, res) => {
-  res.render('home', {
-    title:       'Mood-Based To-Do App',
-    description: 'Your personal mood-driven task manager.',
-  });
+  res.render('home', { title: 'Mood-Based To-Do App' });
 });
 
-/* ── Weather API proxy ───────────────────────────────────────
-   GET /api/weather?lat=<lat>&lon=<lon>
-   Backend calls OpenWeatherMap so the API key stays private.
-────────────────────────────────────────────────────────────*/
+/**
+ * GET /api/weather?lat=&lon=
+ * Securely proxies a request to WeatherAPI so the API key
+ * is never exposed to the browser.
+ *
+ * Returns the raw current-weather JSON from the provider.
+ */
 app.get('/api/weather', async (req, res) => {
   const { lat, lon } = req.query;
 
@@ -63,48 +65,33 @@ app.get('/api/weather', async (req, res) => {
 
   const apiKey = process.env.WEATHER_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'WEATHER_API_KEY not configured on server.' });
+    return res.status(500).json({ error: 'Weather API key is not configured on the server.' });
   }
 
   try {
-    const url = `https://api.openweathermap.org/data/2.5/weather` +
-                `?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    // WeatherAPI accepts "lat,lon" as the q parameter
+    const url = `http://api.weatherapi.com/v1/current.json?key=${apiKey}&q=${lat},${lon}&aqi=no`;
 
-    const { data } = await axios.get(url);
+    // Native fetch is available in Node 18+.
+    // If you are on Node 16, install node-fetch v2 and require it instead.
+    const response = await fetch(url);
 
-    /* Shape the response for the frontend */
-    const weather = {
-      city:        data.name,
-      country:     data.sys.country,
-      temp:        Math.round(data.main.temp),
-      feelsLike:   Math.round(data.main.feels_like),
-      humidity:    data.main.humidity,
-      description: data.weather[0].description,
-      condition:   data.weather[0].main,          // "Rain", "Clear", "Clouds" …
-      icon:        data.weather[0].icon,
-      iconUrl:     `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
-      windSpeed:   data.wind.speed,
-    };
+    if (!response.ok) {
+      const err = await response.json().catch(() => ({}));
+      return res.status(response.status).json({ error: err?.error?.message || 'Weather API error.' });
+    }
 
-    return res.json({ success: true, weather });
+    const data = await response.json();
+    return res.json(data);
+
   } catch (err) {
-    const status  = err.response?.status  || 500;
-    const message = err.response?.data?.message || err.message;
-    return res.status(status).json({ error: message });
+    console.error('[/api/weather]', err.message);
+    return res.status(500).json({ error: 'Failed to fetch weather data.' });
   }
 });
 
-/* 404 handler */
-app.use((req, res) => {
-  res.status(404).render('home', {
-    title: '404 — Not Found',
-  });
-});
+// ── Listen ─────────────────────────────────────────────────────
 
-/* ─────────────────────────────────────────────────────────────
-   START
-───────────────────────────────────────────────────────────────*/
 app.listen(PORT, () => {
-  console.log(`\n  🌿  Mood-Based To-Do — Module 4`);
-  console.log(`  ➜  Local: http://localhost:${PORT}\n`);
+  console.log(`✅  Server running → http://localhost:${PORT}`);
 });
