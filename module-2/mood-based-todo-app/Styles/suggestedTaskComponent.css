@@ -148,7 +148,7 @@
 }
 
 .suggestion-item__keyword--mood {
-  color: var(--color-accent);
+  color: #ffb900;
 }
 
 .suggestion-item__keyword--weather {

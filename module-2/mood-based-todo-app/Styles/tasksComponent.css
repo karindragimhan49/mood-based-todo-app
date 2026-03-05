@@ -156,6 +156,23 @@
   line-height: 1.2;
 }
 
+/* ── Completed Task Card State ───────────────────── */
+.task-card--done {
+  opacity: 0.55;
+}
+
+.task-card--done .task-card__title {
+  text-decoration: line-through;
+  color: var(--color-text-muted);
+}
+
+.task-card__check--done {
+  background: var(--color-accent) !important;
+  border-color: var(--color-accent) !important;
+  color: #0a0e16 !important;
+  box-shadow: 0 0 10px var(--color-accent-glow);
+}
+
 /* ── Columns ──────────────────────────────────────── */
 .col-left {
   display: flex;

@@ -1,7 +1,33 @@
 /* ====================================================
-   loginForm.css — Login Form Card & Input Styles
+   loginForm.css — Login Modal Overlay & Form Styles
    Mood-Based To-Do App
    ==================================================== */
+
+/* ── Page body reset for standalone preview ───────── */
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+/* ── Modal Overlay ─────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-6) var(--space-4);
+  background: rgba(8, 10, 18, 0.82);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: modalFadeIn 250ms ease forwards;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 /* ── Login Form Card ──────────────────────────────── */
 .login-form-card {
@@ -34,6 +60,32 @@
   border-radius: 1px;
 }
 
+/* ── Close Button ────────────────────────────────── */
+.login-form-card__close {
+  position: absolute;
+  top: var(--space-4);
+  right: var(--space-4);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-bg-inner-card);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast),
+              border-color var(--transition-fast),
+              color var(--transition-fast);
+}
+
+.login-form-card__close:hover {
+  background: rgba(255, 70, 70, 0.12);
+  border-color: rgba(255, 70, 70, 0.4);
+  color: #ff6b6b;
+}
+
 /* ── Login Form Header ────────────────────────────── */
 .login-form__header {
   display: flex;
@@ -47,6 +99,7 @@
   font-weight: 800;
   color: var(--color-text-primary);
   letter-spacing: -0.02em;
+  line-height: 1.2;
 }
 
 .login-form__subtitle {
@@ -156,11 +209,13 @@
   border: none;
   border-radius: var(--radius-pill);
   cursor: pointer;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
+  margin-top: var(--space-2);
   transition: background  var(--transition-normal),
               box-shadow  var(--transition-normal),
               transform   var(--transition-fast);
