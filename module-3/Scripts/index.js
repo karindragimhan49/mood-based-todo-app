@@ -1,274 +1,466 @@
+/* ====================================================
+   index.js — App Entry Point & UI Orchestrator
+   Mood-Based To-Do App — Module 3
+
+   This module:
+     • imports pure-logic helpers from the other modules
+     • owns all DOM event listeners
+     • controls modal open/close
+     • shows toast notifications
+     • updates the navbar
+     • re-renders the task list
+   ==================================================== */
+
+import { getUser, saveUser, clearUser, validateLogin, validateProfile } from './loginForm.js';
+import { getTasks, saveTasks, createTask, deleteTask, toggleTask, updateTask, buildTaskCard } from './tasksComponent.js';
+import { validateTaskForm } from './taskCreationForm.js';
+import { getMood, saveMood } from './moodSelecter.js';
+
+// ============================================================
+//  SHARED DOM HELPERS
+// ============================================================
+
 /**
- * index.js — App Core
- * --------------------------------------------------
- * Establishes the global `App` namespace, exposes
- * localStorage helpers, the toast system, and wires
- * up the DOM-ready initialisation sequence.
- *
- * Load order:  1st  (all other scripts depend on this)
+ * Open a modal by its element id (adds .is-open class).
+ * @param {string} id
  */
+function openModal(id) {
+  document.getElementById(id)?.classList.add('is-open');
+}
 
-'use strict';
+/**
+ * Close a modal by its element id (removes .is-open class).
+ * @param {string} id
+ */
+function closeModal(id) {
+  document.getElementById(id)?.classList.remove('is-open');
+}
 
-/* ─────────────────────────────────────────────────────
-   GLOBAL NAMESPACE
-   All modules attach their public API here.
-───────────────────────────────────────────────────── */
-const App = (() => {
+/**
+ * Display a toast notification at the bottom-left.
+ * Automatically removes itself after ~3 seconds.
+ *
+ * @param {string}  message
+ * @param {boolean} [isError=false]
+ */
+function showToast(message, isError = false) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
 
-  /* ── localStorage Keys ──────────────────────────── */
-  const KEYS = {
-    USER:  'moodtask_user',
-    TASKS: 'moodtask_tasks',
-    MOOD:  'moodtask_mood',
-  };
+  const toast = document.createElement('div');
+  toast.className = isError ? 'toast toast--error' : 'toast';
+  toast.innerHTML = `
+    <span class="toast__icon">${isError ? '⚠️' : '✅'}</span>
+    <span class="toast__text">${message}</span>
+  `;
 
-  /* ── localStorage Helpers ───────────────────────── */
+  // Prepend so newest toasts appear on top (container uses column-reverse)
+  container.prepend(toast);
 
-  /** Read & parse a JSON value.  Returns `null` on miss / parse error. */
-  function storageGet(key) {
-    try {
-      const raw = localStorage.getItem(key);
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
+  // Exit animation → remove from DOM
+  setTimeout(() => {
+    toast.classList.add('toast--exit');
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  }, 3200);
+}
+
+/**
+ * Mark a form field as invalid and show an error message beneath it.
+ * @param {string} inputId   — id of the <input>
+ * @param {string} errorId   — id of the error <span>
+ * @param {string} message
+ */
+function showFieldError(inputId, errorId, message) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (input) input.classList.add('is-invalid');
+  if (error) {
+    error.textContent = `⚠ ${message}`;
+    error.classList.add('visible');
+  }
+}
+
+/**
+ * Remove the invalid styling and error message from a form field.
+ * @param {string} inputId
+ * @param {string} errorId
+ */
+function clearFieldError(inputId, errorId) {
+  const input = document.getElementById(inputId);
+  const error = document.getElementById(errorId);
+  if (input) input.classList.remove('is-invalid');
+  if (error) { error.textContent = ''; error.classList.remove('visible'); }
+}
+
+/**
+ * Clear all field errors inside a form.
+ * @param {string} formId — id of the <form>
+ */
+function clearFormErrors(formId) {
+  const form = document.getElementById(formId);
+  if (!form) return;
+  form.querySelectorAll('.field-input.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+  form.querySelectorAll('.field-error').forEach(el => {
+    el.textContent = '';
+    el.classList.remove('visible');
+  });
+}
+
+// ============================================================
+//  NAVBAR
+// ============================================================
+
+/** Sync the navbar greeting to the current user (or Guest). */
+function updateNavbar() {
+  const user = getUser();
+  const nameEl  = document.getElementById('user-welcome');
+  const emailEl = document.getElementById('user-email');
+  if (nameEl)  nameEl.textContent  = user ? user.name  : 'Welcome';
+  if (emailEl) emailEl.textContent = user ? user.email : 'Guest.';
+}
+
+// ============================================================
+//  MOOD
+// ============================================================
+
+/** Update the mood pill in the navbar to match localStorage. */
+function updateMoodPill() {
+  const mood = getMood();
+  const emojiEl = document.getElementById('mood-emoji');
+  const labelEl = document.getElementById('mood-label');
+  if (emojiEl) emojiEl.textContent = mood ? mood.emoji : '😐';
+  if (labelEl) labelEl.textContent = mood ? mood.mood  : 'Neutral';
+}
+
+/** Highlight the currently saved mood in the mood picker modal. */
+function syncMoodButtons() {
+  const mood = getMood();
+  document.querySelectorAll('.mood-option').forEach(btn => {
+    btn.classList.toggle('mood-option--active', mood ? btn.dataset.mood === mood.mood : false);
+  });
+}
+
+// ============================================================
+//  TASKS
+// ============================================================
+
+/** Whether to include completed tasks in the current render. */
+let showingCompleted = false;
+
+/**
+ * Read tasks from localStorage and re-render the task grid.
+ * Completed tasks are hidden unless showingCompleted is true.
+ */
+function refreshTasks() {
+  const grid     = document.getElementById('task-grid');
+  const emptyMsg = document.getElementById('tasks-empty-msg');
+  if (!grid) return;
+
+  const allTasks   = getTasks();
+  const activeCnt  = allTasks.filter(t => !t.completed).length;
+  const visible    = showingCompleted ? allTasks : allTasks.filter(t => !t.completed);
+
+  // Update subtitle pill
+  const countLabel = document.getElementById('task-count-label');
+  if (countLabel) {
+    countLabel.textContent =
+      `You have ${activeCnt} task${activeCnt !== 1 ? 's' : ''} planned for today`;
   }
 
-  /** Serialise and write a value. */
-  function storageSet(key, value) {
-    try {
-      localStorage.setItem(key, JSON.stringify(value));
-    } catch (e) {
-      console.warn('[App] localStorage write failed:', e);
-    }
-  }
+  // Remove stale cards but keep the empty-state message element
+  grid.querySelectorAll('.task-card').forEach(c => c.remove());
 
-  /** Remove a key. */
-  function storageRemove(key) {
-    localStorage.removeItem(key);
-  }
-
-  /* ── User helpers ───────────────────────────────── */
-  const getUser   = ()       => storageGet(KEYS.USER);
-  const setUser   = (u)      => storageSet(KEYS.USER, u);
-  const removeUser= ()       => storageRemove(KEYS.USER);
-
-  /* ── Task helpers ───────────────────────────────── */
-  const getTasks  = ()       => storageGet(KEYS.TASKS) || [];
-  const setTasks  = (tasks)  => storageSet(KEYS.TASKS, tasks);
-
-  /* ── Mood helpers ───────────────────────────────── */
-  const getMood   = ()       => storageGet(KEYS.MOOD) || 'Neutral';
-  const setMood   = (mood)   => storageSet(KEYS.MOOD, mood);
-
-  /* ── ID generator ───────────────────────────────── */
-  function generateId() {
-    return `task_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-  }
-
-  /* ── Date Formatter ─────────────────────────────── */
-  /**
-   * Format a date string / Date to "H:MM AM/PM"
-   * Falls back gracefully if date is invalid.
-   */
-  function formatTime(dateStr) {
-    if (!dateStr) return '';
-    const d = new Date(dateStr);
-    if (isNaN(d.getTime())) return dateStr;
-    return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-  }
-
-  /**
-   * Format date string to "MMM D, YYYY"
-   */
-  function formatDate(dateStr) {
-    if (!dateStr) return '';
-    // dateStr from <input type="date"> is "YYYY-MM-DD"
-    // Parse as local date to avoid timezone shift
-    const [y, m, d] = dateStr.split('-').map(Number);
-    if (!y) return dateStr;
-    const date = new Date(y, m - 1, d);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  /* ─────────────────────────────────────────────────
-     TOAST NOTIFICATION SYSTEM
-  ───────────────────────────────────────────────── */
-
-  /**
-   * Show a bottom-left toast.
-   * @param {string}  message   - Text to display
-   * @param {'success'|'error'} type  - Visual style
-   * @param {number}  duration  - Auto-dismiss ms (default 3000)
-   */
-  function showToast(message, type = 'success', duration = 3000) {
-    const container = document.getElementById('toastContainer');
-    if (!container) return;
-
-    const toast = document.createElement('div');
-    toast.className = `toast${type === 'error' ? ' toast--error' : ''}`;
-
-    // Icon
-    const iconSvg = type === 'error'
-      ? `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-           <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-         </svg>`
-      : `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
-           fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-           <polyline points="20 6 9 17 4 12"/>
-         </svg>`;
-
-    toast.innerHTML = `<span class="toast__icon">${iconSvg}</span>${message}`;
-    container.appendChild(toast);
-
-    // Auto dismiss
-    const dismiss = () => {
-      toast.classList.add('toast--hide');
-      toast.addEventListener('animationend', () => toast.remove(), { once: true });
-    };
-
-    const timer = setTimeout(dismiss, duration);
-
-    // Allow manual dismiss on click
-    toast.addEventListener('click', () => {
-      clearTimeout(timer);
-      dismiss();
+  if (visible.length === 0) {
+    if (emptyMsg) emptyMsg.style.display = '';
+  } else {
+    if (emptyMsg) emptyMsg.style.display = 'none';
+    visible.forEach(task => {
+      const card = buildTaskCard(task, handleDeleteTask, handleToggleTask, handleOpenEditTask);
+      grid.appendChild(card);
     });
   }
+}
 
-  /* ─────────────────────────────────────────────────
-     NAVBAR UI HELPERS
-  ───────────────────────────────────────────────── */
+/** Handle a delete request from a task card's trash button. */
+function handleDeleteTask(id) {
+  deleteTask(id);
+  refreshTasks();
+  showToast('Task deleted.');
+}
 
-  /** Update navbar name / role from stored user */
-  function syncNavbar() {
-    const user = getUser();
-    const nameEl = document.getElementById('navUsername');
-    const roleEl = document.getElementById('navRole');
-    if (!nameEl || !roleEl) return;
+/** Handle a toggle request from a task card's check button. */
+function handleToggleTask(id) {
+  toggleTask(id);
+  refreshTasks();
+}
 
-    if (user) {
-      nameEl.textContent = user.username || 'User';
-      roleEl.textContent = user.email   || '';
-    } else {
-      nameEl.textContent = 'Welcome';
-      roleEl.textContent = 'Guest.';
-    }
-  }
+/** Open the Edit Task modal pre-filled with the given task's data. */
+function handleOpenEditTask(task) {
+  document.getElementById('edit-task-id').value       = task.id;
+  document.getElementById('edit-task-name').value     = task.title;
+  document.getElementById('edit-task-duration').value = task.duration;
+  document.getElementById('edit-task-time').value     = task.time;
+  clearFormErrors('edit-task-form');
+  openModal('edit-task-modal');
+}
 
-  /* ─────────────────────────────────────────────────
-     MODAL HELPERS
-  ───────────────────────────────────────────────── */
+// ============================================================
+//  BOOT — runs after the DOM is ready
+// ============================================================
 
-  /** Open a modal (remove hidden, prevent body scroll) */
-  function openModal(modalId) {
-    const el = document.getElementById(modalId);
-    if (!el) return;
-    el.removeAttribute('hidden');
-    document.body.style.overflow = 'hidden';
-  }
+document.addEventListener('DOMContentLoaded', () => {
 
-  /** Close a modal and restore scroll */
-  function closeModal(modalId) {
-    const el = document.getElementById(modalId);
-    if (!el) return;
-    el.setAttribute('hidden', '');
-    // Restore scroll only if no other modals are open
-    const open = document.querySelector('.modal-overlay:not([hidden])');
-    if (!open) document.body.style.overflow = '';
-  }
+  // ── Initial sync ────────────────────────────────────────
+  updateNavbar();
+  updateMoodPill();
+  refreshTasks();
 
-  /** Close modal when clicking the overlay backdrop */
-  function setupModalBackdropClose(modalId) {
-    const el = document.getElementById(modalId);
-    if (!el) return;
-    el.addEventListener('click', (e) => {
-      if (e.target === el) closeModal(modalId);
+  // ── Close any modal when the user clicks the dark backdrop ──
+  ['login-modal', 'profile-modal', 'add-task-modal', 'edit-task-modal', 'mood-modal']
+    .forEach(id => {
+      document.getElementById(id)?.addEventListener('click', (e) => {
+        if (e.target.id === id) closeModal(id);
+      });
     });
-  }
 
-  /** Bind ESC key to close all open modals */
+  // ── Keyboard: Escape closes the topmost open modal ─────
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
-    document.querySelectorAll('.modal-overlay:not([hidden])').forEach(m => {
-      closeModal(m.id);
+    const modalIds = ['mood-modal', 'edit-task-modal', 'add-task-modal', 'profile-modal', 'login-modal'];
+    for (const id of modalIds) {
+      if (document.getElementById(id)?.classList.contains('is-open')) {
+        closeModal(id);
+        break;
+      }
+    }
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  PROFILE / AUTH BUTTONS
+  // ════════════════════════════════════════════════════════
+
+  // Profile icon: open Login if no user, otherwise open Profile Settings
+  document.getElementById('profile-btn')?.addEventListener('click', () => {
+    const user = getUser();
+    if (user) {
+      document.getElementById('profile-name').value  = user.name;
+      document.getElementById('profile-email').value = user.email;
+      clearFormErrors('profile-form');
+      openModal('profile-modal');
+    } else {
+      document.getElementById('login-form').reset();
+      clearFormErrors('login-form');
+      openModal('login-modal');
+    }
+  });
+
+  // Close buttons
+  document.getElementById('close-login-modal')?.addEventListener('click',    () => closeModal('login-modal'));
+  document.getElementById('close-profile-modal')?.addEventListener('click',  () => closeModal('profile-modal'));
+  document.getElementById('close-add-task-modal')?.addEventListener('click', () => closeModal('add-task-modal'));
+  document.getElementById('close-edit-task-modal')?.addEventListener('click',() => closeModal('edit-task-modal'));
+  document.getElementById('close-mood-modal')?.addEventListener('click',     () => closeModal('mood-modal'));
+
+  // ════════════════════════════════════════════════════════
+  //  LOGIN FORM
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('login-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearFormErrors('login-form');
+
+    const name     = document.getElementById('login-name').value.trim();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    const errors = validateLogin(name, email, password);
+
+    if (Object.keys(errors).length > 0) {
+      if (errors.name)     showFieldError('login-name',     'login-name-error',     errors.name);
+      if (errors.email)    showFieldError('login-email',    'login-email-error',    errors.email);
+      if (errors.password) showFieldError('login-password', 'login-password-error', errors.password);
+      return;
+    }
+
+    saveUser({ name, email });
+    document.getElementById('login-form').reset();
+    closeModal('login-modal');
+    updateNavbar();
+    showToast(`Welcome, ${name}! You're logged in. 👋`);
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  PROFILE / EDIT USER FORM
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('profile-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearFormErrors('profile-form');
+
+    const name  = document.getElementById('profile-name').value.trim();
+    const email = document.getElementById('profile-email').value.trim();
+
+    const errors = validateProfile(name, email);
+
+    if (Object.keys(errors).length > 0) {
+      if (errors.name)  showFieldError('profile-name',  'profile-name-error',  errors.name);
+      if (errors.email) showFieldError('profile-email', 'profile-email-error', errors.email);
+      return;
+    }
+
+    saveUser({ name, email });
+    closeModal('profile-modal');
+    updateNavbar();
+    showToast('Profile updated successfully!');
+  });
+
+  // Logout button inside Profile Settings modal
+  document.getElementById('logout-btn')?.addEventListener('click', () => {
+    clearUser();
+    closeModal('profile-modal');
+    updateNavbar();
+    showToast('Logged out. See you next time!');
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  ADD TASK
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('add-task-btn')?.addEventListener('click', () => {
+    document.getElementById('add-task-form').reset();
+    clearFormErrors('add-task-form');
+    openModal('add-task-modal');
+  });
+
+  document.getElementById('add-task-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearFormErrors('add-task-form');
+
+    const title    = document.getElementById('new-task-name').value.trim();
+    const duration = document.getElementById('new-task-duration').value;
+    const time     = document.getElementById('new-task-time').value;
+
+    const errors = validateTaskForm(title, duration, time);
+
+    if (Object.keys(errors).length > 0) {
+      if (errors.title)    showFieldError('new-task-name',     'new-task-name-error',     errors.title);
+      if (errors.duration) showFieldError('new-task-duration', 'new-task-duration-error', errors.duration);
+      if (errors.time)     showFieldError('new-task-time',     'new-task-time-error',     errors.time);
+      return;
+    }
+
+    createTask(title, Number(duration), time);
+    document.getElementById('add-task-form').reset();
+    closeModal('add-task-modal');
+    refreshTasks();
+    showToast(`"${title}" added to your tasks!`);
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  EDIT TASK
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('edit-task-form')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    clearFormErrors('edit-task-form');
+
+    const id       = document.getElementById('edit-task-id').value;
+    const title    = document.getElementById('edit-task-name').value.trim();
+    const duration = document.getElementById('edit-task-duration').value;
+    const time     = document.getElementById('edit-task-time').value;
+
+    const errors = validateTaskForm(title, duration, time);
+
+    if (Object.keys(errors).length > 0) {
+      if (errors.title)    showFieldError('edit-task-name',     'edit-task-name-error',     errors.title);
+      if (errors.duration) showFieldError('edit-task-duration', 'edit-task-duration-error', errors.duration);
+      if (errors.time)     showFieldError('edit-task-time',     'edit-task-time-error',     errors.time);
+      return;
+    }
+
+    updateTask(id, title, Number(duration), time);
+    closeModal('edit-task-modal');
+    refreshTasks();
+    showToast('Task updated successfully!');
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  COMPLETE ALL & SHOW/HIDE COMPLETED
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('complete-all-btn')?.addEventListener('click', () => {
+    const tasks   = getTasks();
+    const updated = tasks.map(t => ({ ...t, completed: true }));
+    saveTasks(updated);
+    refreshTasks();
+    showToast('All tasks marked as complete! 🎉');
+  });
+
+  const showCompletedBtn = document.getElementById('show-completed-btn');
+  showCompletedBtn?.addEventListener('click', () => {
+    showingCompleted = !showingCompleted;
+    showCompletedBtn.textContent = showingCompleted ? 'Hide Completed' : 'Show Completed';
+    refreshTasks();
+  });
+
+  // ════════════════════════════════════════════════════════
+  //  MOOD SELECTOR
+  // ════════════════════════════════════════════════════════
+
+  document.getElementById('mood-btn')?.addEventListener('click', () => {
+    syncMoodButtons();
+    // Enable confirm only if a mood is already saved
+    const confirmBtn = document.getElementById('confirm-mood-btn');
+    if (confirmBtn) confirmBtn.disabled = !getMood();
+    openModal('mood-modal');
+  });
+
+  // Track which mood is selected inside the modal
+  let selectedMoodData = getMood();
+
+  document.querySelectorAll('.mood-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.mood-option').forEach(b => b.classList.remove('mood-option--active'));
+      btn.classList.add('mood-option--active');
+      selectedMoodData = { mood: btn.dataset.mood, emoji: btn.dataset.emoji };
+      const confirmBtn = document.getElementById('confirm-mood-btn');
+      if (confirmBtn) confirmBtn.disabled = false;
     });
   });
 
-  /* ─────────────────────────────────────────────────
-     VALIDATION HELPERS
-  ───────────────────────────────────────────────── */
-  const isValidEmail = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
-  const isEmpty      = (v) => !v || !v.trim();
+  document.getElementById('confirm-mood-btn')?.addEventListener('click', () => {
+    if (!selectedMoodData) return;
+    saveMood(selectedMoodData.mood, selectedMoodData.emoji);
+    updateMoodPill();
+    closeModal('mood-modal');
+    // Also update the emoji shown on the mood suggestion item
+    const moodIconEl = document.getElementById('suggestion-mood-emoji');
+    if (moodIconEl) moodIconEl.textContent = selectedMoodData.emoji;
+    showToast(`Mood set to ${selectedMoodData.mood} ${selectedMoodData.emoji}`);
+  });
 
-  /** Set/clear an error message and input styling */
-  function setFieldError(inputId, errorId, message) {
-    const input = document.getElementById(inputId);
-    const error = document.getElementById(errorId);
-    if (input) input.classList.toggle('input-error', Boolean(message));
-    if (error) error.textContent = message || '';
-  }
+  // ════════════════════════════════════════════════════════
+  //  SUGGESTED TASK ACCEPT BUTTONS
+  // ════════════════════════════════════════════════════════
 
-  /** Clear all field errors in a container */
-  function clearFieldErrors(containerEl) {
-    containerEl.querySelectorAll('.field-error').forEach(e => (e.textContent = ''));
-    containerEl.querySelectorAll('.input-error').forEach(el => el.classList.remove('input-error'));
-  }
+  // Each suggestion card's check button has data-title, data-duration, data-time
+  document.querySelectorAll('.suggestion-item__check').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const title    = btn.dataset.title;
+      const duration = Number(btn.dataset.duration);
+      const time     = btn.dataset.time;
 
-  /* ─────────────────────────────────────────────────
-     APP INITIALISATION
-  ───────────────────────────────────────────────── */
-  function init() {
-    // Sync UI from stored state immediately
-    syncNavbar();
+      if (!title) return;
 
-    // Wire backdrop closes for every modal
-    ['loginModal', 'editProfileModal', 'taskModal', 'moodModal'].forEach(id => {
-      setupModalBackdropClose(id);
+      createTask(title, duration, time);
+      refreshTasks();
+      showToast(`"${title}" added to your tasks!`);
+
+      // Visual feedback: briefly animate the check button
+      btn.style.transform = 'scale(1.3)';
+      setTimeout(() => { btn.style.transform = ''; }, 300);
     });
+  });
 
-    console.log('[App] Core initialised.');
-  }
-
-  /* ─────────────────────────────────────────────────
-     PUBLIC API
-  ───────────────────────────────────────────────── */
-  return {
-    // Keys
-    KEYS,
-    // Storage
-    getUser, setUser, removeUser,
-    getTasks, setTasks,
-    getMood,  setMood,
-    storageGet, storageSet, storageRemove,
-    // Utilities
-    generateId, formatTime, formatDate,
-    // Toast
-    showToast,
-    // Navbar
-    syncNavbar,
-    // Modal
-    openModal, closeModal,
-    // Validation
-    isValidEmail, isEmpty, setFieldError, clearFieldErrors,
-    // Init
-    init,
-  };
-})();
-
-/* ─────────────────────────────────────────────────────
-   BOOT — wait for all scripts before calling module inits
-───────────────────────────────────────────────────── */
-window.addEventListener('DOMContentLoaded', () => {
-  // Core init (navbar sync, modal backdrops, ESC handler)
-  App.init();
-
-  // Module inits (defined in their respective files)
-  if (typeof LoginForm           !== 'undefined') LoginForm.init();
-  if (typeof TasksComponent      !== 'undefined') TasksComponent.init();
-  if (typeof TaskCreationForm    !== 'undefined') TaskCreationForm.init();
-  if (typeof SuggestedTasks      !== 'undefined') SuggestedTasks.init();
-  if (typeof MoodSelector        !== 'undefined') MoodSelector.init();
-});
+}); // end DOMContentLoaded

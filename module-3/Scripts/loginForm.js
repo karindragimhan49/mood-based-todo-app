@@ -1,209 +1,89 @@
+/* ====================================================
+   loginForm.js — Auth State & User Validation
+   Mood-Based To-Do App — Module 3
+   ==================================================== */
+
+const USER_KEY = 'moodtodo_user';
+
+// ── LocalStorage Helpers ───────────────────────────────────────
+
 /**
- * loginForm.js — Authentication Module
- * --------------------------------------------------
- * Handles:
- *  - Profile button click → show Login or Edit Profile modal
- *  - Login / account creation
- *  - Edit profile (username, email)
- *  - Logout
- *
- * Load order: 2nd  (after index.js)
+ * Read the current user object from localStorage.
+ * @returns {{ name: string, email: string } | null}
  */
+export function getUser() {
+  try {
+    const raw = localStorage.getItem(USER_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
 
-'use strict';
+/**
+ * Persist a user object to localStorage.
+ * @param {{ name: string, email: string }} user
+ */
+export function saveUser(user) {
+  localStorage.setItem(USER_KEY, JSON.stringify(user));
+}
 
-const LoginForm = (() => {
+/**
+ * Remove the user from localStorage (logout).
+ */
+export function clearUser() {
+  localStorage.removeItem(USER_KEY);
+}
 
-  /* ── DOM refs (resolved lazily after DOMContentLoaded) ── */
-  let elProfileBtn;
-  let elLoginModal, elLoginClose, elLoginEmail, elLoginPassword,
-      elLoginEmailErr, elLoginPasswordErr, elLoginSubmit;
-  let elEditModal, elEditClose, elEditUsername, elEditEmail,
-      elEditUsernameErr, elEditEmailErr, elEditSave, elLogout;
+// ── Validation ─────────────────────────────────────────────────
 
-  /* ─────────────────────────────────────────────────
-     OPEN HELPERS
-  ───────────────────────────────────────────────── */
+/**
+ * Validate login form fields.
+ * @param {string} name
+ * @param {string} email
+ * @param {string} password
+ * @returns {Object} errors — empty object means valid
+ */
+export function validateLogin(name, email, password) {
+  const errors = {};
 
-  function openLoginModal() {
-    // Clear previous values & errors
-    elLoginEmail.value    = '';
-    elLoginPassword.value = '';
-    App.clearFieldErrors(elLoginModal);
-    App.openModal('loginModal');
-    elLoginEmail.focus();
+  if (!name.trim()) {
+    errors.name = 'Name is required.';
   }
 
-  function openEditProfileModal() {
-    const user = App.getUser();
-    if (!user) { openLoginModal(); return; }
-
-    elEditUsername.value = user.username || '';
-    elEditEmail.value    = user.email    || '';
-    App.clearFieldErrors(elEditModal);
-    App.openModal('editProfileModal');
-    elEditUsername.focus();
+  if (!email.trim()) {
+    errors.email = 'Email is required.';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    errors.email = 'Please enter a valid email address.';
   }
 
-  /* ─────────────────────────────────────────────────
-     PROFILE BUTTON CLICK
-  ───────────────────────────────────────────────── */
-
-  /**
-   * If a user is stored → Edit Profile
-   * If no user         → Login
-   */
-  function handleProfileClick() {
-    App.getUser() ? openEditProfileModal() : openLoginModal();
+  if (!password) {
+    errors.password = 'Password is required.';
+  } else if (password.length < 8) {
+    errors.password = 'Password must be at least 8 characters long.';
   }
 
-  /* ─────────────────────────────────────────────────
-     LOGIN / CREATE ACCOUNT
-  ───────────────────────────────────────────────── */
+  return errors;
+}
 
-  function handleLogin() {
-    const email    = elLoginEmail.value.trim();
-    const password = elLoginPassword.value;
+/**
+ * Validate edit-profile form fields.
+ * @param {string} name
+ * @param {string} email
+ * @returns {Object} errors — empty object means valid
+ */
+export function validateProfile(name, email) {
+  const errors = {};
 
-    // Clear previous errors
-    App.clearFieldErrors(elLoginModal);
-    let valid = true;
-
-    // Validate email / username
-    if (App.isEmpty(email)) {
-      App.setFieldError('loginEmail', 'loginEmailError', 'Email or username is required.');
-      valid = false;
-    }
-    // Validate password
-    if (App.isEmpty(password)) {
-      App.setFieldError('loginPassword', 'loginPasswordError', 'Password is required.');
-      valid = false;
-    } else if (password.length < 4) {
-      App.setFieldError('loginPassword', 'loginPasswordError', 'Password must be at least 4 characters.');
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    // Derive username from email if it looks like an email, else use as-is
-    const isEmail  = App.isValidEmail(email);
-    const username = isEmail ? email.split('@')[0] : email;
-
-    // Build & persist the user object
-    const user = {
-      username,
-      email: isEmail ? email : `${email}@moodtask.app`,
-      passwordHash: btoa(password), // lightweight obfuscation (not production security)
-      createdAt: new Date().toISOString(),
-    };
-
-    App.setUser(user);
-    App.closeModal('loginModal');
-    App.syncNavbar();
-    App.showToast(`Welcome, ${username}! You're signed in. 🎉`);
-
-    // Re-render task count label
-    if (typeof TasksComponent !== 'undefined') TasksComponent.renderTasks();
+  if (!name.trim()) {
+    errors.name = 'Name is required.';
   }
 
-  /* ─────────────────────────────────────────────────
-     EDIT PROFILE
-  ───────────────────────────────────────────────── */
-
-  function handleEditProfileSave() {
-    const username = elEditUsername.value.trim();
-    const email    = elEditEmail.value.trim();
-
-    App.clearFieldErrors(elEditModal);
-    let valid = true;
-
-    if (App.isEmpty(username)) {
-      App.setFieldError('editUsername', 'editUsernameError', 'Username is required.');
-      valid = false;
-    }
-    if (!App.isEmpty(email) && !App.isValidEmail(email)) {
-      App.setFieldError('editEmail', 'editEmailError', 'Please enter a valid email address.');
-      valid = false;
-    }
-
-    if (!valid) return;
-
-    const existing = App.getUser() || {};
-    const updated  = { ...existing, username, email: email || existing.email, updatedAt: new Date().toISOString() };
-
-    App.setUser(updated);
-    App.closeModal('editProfileModal');
-    App.syncNavbar();
-    App.showToast('Profile updated successfully.');
+  if (!email.trim()) {
+    errors.email = 'Email is required.';
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+    errors.email = 'Please enter a valid email address.';
   }
 
-  /* ─────────────────────────────────────────────────
-     LOGOUT
-  ───────────────────────────────────────────────── */
-
-  function handleLogout() {
-    App.removeUser();
-    App.closeModal('editProfileModal');
-    App.syncNavbar();
-    App.showToast('You\'ve been logged out. See you soon!');
-    // Re-render so task count still shows
-    if (typeof TasksComponent !== 'undefined') TasksComponent.renderTasks();
-  }
-
-  /* ─────────────────────────────────────────────────
-     ENTER KEY SUPPORT
-  ───────────────────────────────────────────────── */
-
-  function handleLoginKeydown(e) {
-    if (e.key === 'Enter') handleLogin();
-  }
-
-  function handleEditKeydown(e) {
-    if (e.key === 'Enter') handleEditProfileSave();
-  }
-
-  /* ─────────────────────────────────────────────────
-     INIT
-  ───────────────────────────────────────────────── */
-
-  function init() {
-    // Resolve DOM refs
-    elProfileBtn      = document.getElementById('profileBtn');
-
-    elLoginModal      = document.getElementById('loginModal');
-    elLoginClose      = document.getElementById('loginModalClose');
-    elLoginEmail      = document.getElementById('loginEmail');
-    elLoginPassword   = document.getElementById('loginPassword');
-    elLoginEmailErr   = document.getElementById('loginEmailError');
-    elLoginPasswordErr= document.getElementById('loginPasswordError');
-    elLoginSubmit     = document.getElementById('loginSubmitBtn');
-
-    elEditModal       = document.getElementById('editProfileModal');
-    elEditClose       = document.getElementById('editProfileModalClose');
-    elEditUsername    = document.getElementById('editUsername');
-    elEditEmail       = document.getElementById('editEmail');
-    elEditUsernameErr = document.getElementById('editUsernameError');
-    elEditEmailErr    = document.getElementById('editEmailError');
-    elEditSave        = document.getElementById('editProfileSaveBtn');
-    elLogout          = document.getElementById('logoutBtn');
-
-    // Bind events
-    elProfileBtn.addEventListener('click', handleProfileClick);
-
-    elLoginClose .addEventListener('click', () => App.closeModal('loginModal'));
-    elLoginSubmit.addEventListener('click', handleLogin);
-    elLoginEmail.addEventListener('keydown',    handleLoginKeydown);
-    elLoginPassword.addEventListener('keydown', handleLoginKeydown);
-
-    elEditClose.addEventListener('click', () => App.closeModal('editProfileModal'));
-    elEditSave .addEventListener('click', handleEditProfileSave);
-    elEditUsername.addEventListener('keydown', handleEditKeydown);
-    elEditEmail   .addEventListener('keydown', handleEditKeydown);
-    elLogout      .addEventListener('click', handleLogout);
-
-    console.log('[LoginForm] Initialised.');
-  }
-
-  /* ── Public API ─────────────────────────────────── */
-  return { init, openLoginModal, openEditProfileModal };
-})();
+  return errors;
+}

@@ -1,86 +1,20 @@
 /* ====================================================
-   loginForm.css — Login & Edit Profile Modal Styles
-   Module 3 — Mood-Based To-Do App
+   loginForm.css — Login & Profile Modal Form Styles
+   Mood-Based To-Do App — Module 3
+   (Modal overlay base is in index.css)
    ==================================================== */
 
-/* ── Form Header ──────────────────────────────────── */
-.login-form__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  margin-bottom: var(--space-6);
-}
-.login-form__title {
-  font-size: var(--font-size-2xl);
-  font-weight: 800;
-  color: var(--color-text-primary);
-  letter-spacing: -.02em;
-}
-.login-form__subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-}
+/* The .modal-overlay and .modal-card base styles are defined in index.css.
+   This file adds login-form and profile-form specific overrides only. */
 
-/* ── Fields ───────────────────────────────────────── */
-.login-form__fields { display: flex; flex-direction: column; gap: var(--space-4); margin-bottom: var(--space-2); }
-.login-form__group  { display: flex; flex-direction: column; gap: var(--space-2); position: relative; }
-.login-form__label {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: .04em;
-}
+/* ── Login Form — Form groups
+   No additional overrides needed for standard text/email/password fields.
+   The shared .form-field, .field-input, .field-label, .field-error in
+   index.css handles everything.
+   ─────────────────────────────────────────────────── */
 
-/* Input wrapper with icon */
-.login-form__input-wrapper { position: relative; }
-.login-form__input-icon {
-  position: absolute;
-  left: var(--space-4); top: 50%;
-  transform: translateY(-50%);
-  color: var(--color-text-muted);
-  display: flex; align-items: center;
-  pointer-events: none;
-  transition: color var(--transition-fast);
-}
-
-.login-form__input {
-  width: 100%;
-  background: var(--color-bg-inner-card);
-  border: 1.5px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-3) var(--space-4) var(--space-3) calc(var(--space-4) * 2 + 18px);
-  font-size: var(--font-size-md);
-  color: var(--color-text-primary);
-  outline: none;
-  transition: border-color var(--transition-fast),
-              box-shadow   var(--transition-fast),
-              background   var(--transition-fast);
-}
-.login-form__input::placeholder { color: var(--color-text-muted); }
-.login-form__input:focus {
-  border-color: var(--color-border-focus);
-  background: rgba(163,255,18,.04);
-  box-shadow: 0 0 0 3px rgba(163,255,18,.1);
-}
-.login-form__input:focus ~ .login-form__input-icon,
-.login-form__input-wrapper:focus-within .login-form__input-icon { color: var(--color-accent); }
-.login-form__input.input-error {
-  border-color: rgba(255,107,107,.6);
-  box-shadow: 0 0 0 3px rgba(255,107,107,.1);
-}
-
-/* Footer note */
-.login-form__footer-text {
-  text-align: center;
-  font-size: var(--font-size-xs);
-  color: var(--color-text-muted);
-  margin-top: var(--space-4);
-  line-height: 1.6;
-}
-.login-form__footer-text strong { color: var(--color-accent); }
-
-/* ── Responsive ───────────────────────────────────── */
-@media (max-width: 767px) {
-  .login-form__title { font-size: var(--font-size-xl); }
+/* ── Profile form two-button layout ──────────────── */
+/* The profile form has Save + Logout stacked, with a small gap between */
+#profile-form .modal-submit-btn + .modal-submit-btn {
+  margin-top: calc(-1 * var(--space-1));
 }

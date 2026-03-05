@@ -1,130 +1,100 @@
 /* ====================================================
-   moodSelecter.css — Mood Selector Modal Styles
-   Module 3 — Mood-Based To-Do App
+   moodSelecter.css — Mood Selector Modal Content
+   Mood-Based To-Do App — Module 3
+   (Modal overlay base is in index.css)
    ==================================================== */
 
-/* ── Mood Selector Header ─────────────────────────── */
-.mood-selector__header {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  align-items: center;
-  text-align: center;
-  margin-bottom: var(--space-7);
-}
-.mood-selector__title {
-  font-size: var(--font-size-2xl);
-  font-weight: 800;
-  color: var(--color-text-primary);
-  letter-spacing: -.02em;
-}
-.mood-selector__subtitle {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  max-width: 300px;
-}
-
-/* ── Mood Options Grid ────────────────────────────── */
+/* ── Mood Options Container ───────────────────────── */
 .mood-options {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
-/* ── Individual Mood Pill ─────────────────────────── */
+/* ── Individual Mood Button ───────────────────────── */
 .mood-option {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
-  padding: var(--space-5) var(--space-3);
+  gap: var(--space-2);
+  padding: var(--space-4) var(--space-5);
   background: var(--color-bg-inner-card);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-lg);
   cursor: pointer;
   transition: border-color var(--transition-normal),
-              background  var(--transition-normal),
-              transform   var(--transition-normal),
-              box-shadow  var(--transition-normal);
+              background   var(--transition-normal),
+              transform    var(--transition-normal),
+              box-shadow   var(--transition-normal);
+  min-width: 90px;
   position: relative;
   overflow: hidden;
-  user-select: none;
 }
 
 .mood-option::before {
   content: '';
-  position: absolute; inset: 0;
+  position: absolute;
+  inset: 0;
   border-radius: inherit;
-  background: radial-gradient(circle at 50% 0%, rgba(163,255,18,.1) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 0%,
+    rgba(163, 255, 18, 0.1) 0%, transparent 70%);
   opacity: 0;
   transition: opacity var(--transition-normal);
 }
 
 .mood-option:hover {
-  border-color: rgba(163,255,18,.45);
-  background: rgba(163,255,18,.05);
+  border-color: rgba(163, 255, 18, 0.45);
+  background: rgba(163, 255, 18, 0.05);
   transform: translateY(-3px);
-  box-shadow: 0 8px 24px rgba(0,0,0,.25), 0 0 14px rgba(163,255,18,.15);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25),
+              0 0 14px rgba(163, 255, 18, 0.12);
 }
+
 .mood-option:hover::before { opacity: 1; }
 
-/* Active / selected */
-.mood-option.mood-option--active {
+/* Active / selected mood */
+.mood-option--active {
   border-color: var(--color-accent);
-  background: rgba(163,255,18,.1);
-  box-shadow: 0 0 0 3px rgba(163,255,18,.2), 0 4px 16px rgba(0,0,0,.25);
+  background: rgba(163, 255, 18, 0.1);
+  box-shadow: 0 0 0 3px rgba(163, 255, 18, 0.2),
+              0 4px 16px rgba(0, 0, 0, 0.25);
 }
-.mood-option.mood-option--active::before { opacity: 1; }
 
+.mood-option--active::before { opacity: 1; }
+
+/* Emoji */
 .mood-option__emoji {
-  font-size: 2.2rem;
+  font-size: 2rem;
   line-height: 1;
   display: block;
-  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
   transition: transform var(--transition-normal);
 }
-.mood-option:hover .mood-option__emoji,
-.mood-option.mood-option--active .mood-option__emoji { transform: scale(1.15); }
 
+.mood-option:hover .mood-option__emoji,
+.mood-option--active .mood-option__emoji {
+  transform: scale(1.18);
+}
+
+/* Label */
 .mood-option__label {
   font-size: var(--font-size-xs);
   font-weight: 600;
   color: var(--color-text-secondary);
-  letter-spacing: .04em;
-  text-align: center;
+  letter-spacing: 0.04em;
   transition: color var(--transition-normal);
 }
-.mood-option:hover .mood-option__label,
-.mood-option.mood-option--active .mood-option__label { color: var(--color-accent); }
 
-/* Confirm Button */
-.mood-confirm-btn {
-  width: 100%;
-  padding: var(--space-4) var(--space-6);
-  background: var(--color-accent);
-  color: #0a0e16;
-  font-family: var(--font-family);
-  font-size: var(--font-size-md);
-  font-weight: 700;
-  border: none;
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-  letter-spacing: .02em;
-  transition: all var(--transition-normal);
-}
-.mood-confirm-btn:hover {
-  background: var(--color-accent-hover);
-  box-shadow: 0 0 20px var(--color-accent-glow), 0 4px 12px rgba(0,0,0,.3);
-  transform: translateY(-2px);
+.mood-option:hover .mood-option__label,
+.mood-option--active .mood-option__label {
+  color: var(--color-accent);
 }
 
 /* ── Responsive ───────────────────────────────────── */
 @media (max-width: 767px) {
-  .mood-options { grid-template-columns: repeat(3, 1fr); gap: var(--space-3); }
-  .mood-option  { padding: var(--space-4) var(--space-2); }
-  .mood-option__emoji { font-size: 1.8rem; }
-}
-@media (max-width: 400px) {
-  .mood-options { grid-template-columns: repeat(2, 1fr); }
+  .mood-options { gap: var(--space-2); }
+  .mood-option { min-width: 76px; padding: var(--space-3) var(--space-4); }
+  .mood-option__emoji { font-size: 1.7rem; }
 }

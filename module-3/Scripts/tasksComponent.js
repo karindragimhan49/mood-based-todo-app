@@ -1,280 +1,195 @@
+/* ====================================================
+   tasksComponent.js — Task CRUD & DOM Card Builder
+   Mood-Based To-Do App — Module 3
+   ==================================================== */
+
+const TASKS_KEY = 'moodtodo_tasks';
+
+// ── LocalStorage Helpers ───────────────────────────────────────
+
 /**
- * tasksComponent.js — Task Rendering & CRUD Display
- * --------------------------------------------------
- * Handles:
- *  - Rendering the task grid dynamically
- *  - Toggle complete / incomplete
- *  - Delete task (with confirmation toast)
- *  - "Complete All" button
- *  - "Show / Hide Completed" toggle
- *  - Task count label sync
- *
- * Load order: 3rd  (after index.js, loginForm.js)
+ * Read all tasks from localStorage.
+ * @returns {Array}
  */
-
-'use strict';
-
-const TasksComponent = (() => {
-
-  /* ── State ──────────────────────────────────────── */
-  let showCompleted = true;  // controlled by the toggle button
-
-  /* ── DOM refs ───────────────────────────────────── */
-  let elGrid, elEmptyState, elCountLabel, elCompleteAll, elShowCompleted, elAddTask;
-
-  /* ─────────────────────────────────────────────────
-     RENDER
-  ───────────────────────────────────────────────── */
-
-  /**
-   * Full re-render of the task grid from localStorage.
-   * Called after any mutation (add / edit / delete / toggle).
-   */
-  function renderTasks() {
-    const tasks = App.getTasks();
-
-    // Filter based on toggle
-    const visible = showCompleted
-      ? tasks
-      : tasks.filter(t => !t.completed);
-
-    // Sync count label (always reflects ALL tasks)
-    const total  = tasks.length;
-    const pending= tasks.filter(t => !t.completed).length;
-    if (elCountLabel) {
-      elCountLabel.textContent =
-        total === 0
-          ? 'No tasks planned for today'
-          : `You have ${pending} task${pending !== 1 ? 's' : ''} planned for today`;
-    }
-
-    // Sync toggle button label
-    if (elShowCompleted) {
-      const completed = tasks.filter(t => t.completed).length;
-      elShowCompleted.textContent = showCompleted ? 'Hide Completed' : `Show Completed (${completed})`;
-      elShowCompleted.classList.toggle('is-active', !showCompleted);
-    }
-
-    // Empty state
-    if (elEmptyState) elEmptyState.hidden = visible.length > 0;
-    if (elGrid)       elGrid.hidden       = visible.length === 0;
-
-    if (!elGrid) return;
-
-    elGrid.innerHTML = visible.map(task => buildTaskCard(task)).join('');
-
-    // Attach per-card listeners using event delegation on the grid
-    attachGridListeners();
+export function getTasks() {
+  try {
+    const raw = localStorage.getItem(TASKS_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
   }
+}
 
-  /* ─────────────────────────────────────────────────
-     BUILD TASK CARD HTML
-  ───────────────────────────────────────────────── */
+/**
+ * Overwrite the entire tasks array in localStorage.
+ * @param {Array} tasks
+ */
+export function saveTasks(tasks) {
+  localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+}
 
-  function buildTaskCard(task) {
-    const completedClass = task.completed ? 'task-card--completed' : '';
-    const description    = task.description
-      ? `<p class="task-card__desc">${escapeHtml(task.description)}</p>`
-      : '';
-    const dueDate        = task.dueDate
-      ? `<p class="task-card__due">
-           <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24"
-             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-             <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-             <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
-             <line x1="3" y1="10" x2="21" y2="10"/>
-           </svg>
-           ${App.formatDate(task.dueDate)}
-         </p>`
-      : '';
+// ── ID Generation ──────────────────────────────────────────────
 
-    const timeLabel = task.dueDate ? App.formatTime(task.dueDate + 'T12:00') : '';
-    const durationLabel = task.duration ? `${task.duration} mins` : '';
+function generateId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 9);
+}
 
-    // Check icon
-    const checkSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>`;
+// ── CRUD Operations ────────────────────────────────────────────
 
-    // Delete icon
-    const deleteSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24"
-      fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <polyline points="3 6 5 6 21 6"/>
-      <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
-      <path d="M10 11v6"/><path d="M14 11v6"/>
-      <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
-    </svg>`;
+/**
+ * Create a new task and persist it to localStorage.
+ * @param {string} title
+ * @param {number} duration  — minutes
+ * @param {string} time      — "HH:MM" 24-hour
+ * @returns {Object} the new task
+ */
+export function createTask(title, duration, time) {
+  const tasks = getTasks();
+  const task = {
+    id: generateId(),
+    title: title.trim(),
+    duration: Number(duration),
+    time,
+    completed: false,
+    createdAt: Date.now(),
+  };
+  tasks.push(task);
+  saveTasks(tasks);
+  return task;
+}
 
-    return `
-      <div class="task-card ${completedClass}"
-           data-id="${task.id}"
-           role="button"
-           tabindex="0"
-           aria-label="${escapeHtml(task.title)}${task.completed ? ' (completed)' : ''}">
+/**
+ * Permanently remove a task by id.
+ * @param {string} id
+ */
+export function deleteTask(id) {
+  saveTasks(getTasks().filter(t => t.id !== id));
+}
 
-        <!-- Delete button (hover-reveal) -->
-        <button class="task-card__delete"
-                data-action="delete"
-                data-id="${task.id}"
-                aria-label="Delete task"
-                title="Delete task">
-          ${deleteSvg}
+/**
+ * Flip the completed boolean of a task.
+ * @param {string} id
+ */
+export function toggleTask(id) {
+  saveTasks(
+    getTasks().map(t => t.id === id ? { ...t, completed: !t.completed } : t)
+  );
+}
+
+/**
+ * Update a task's editable fields.
+ * @param {string} id
+ * @param {string} title
+ * @param {number} duration
+ * @param {string} time
+ */
+export function updateTask(id, title, duration, time) {
+  saveTasks(
+    getTasks().map(t =>
+      t.id === id ? { ...t, title: title.trim(), duration: Number(duration), time } : t
+    )
+  );
+}
+
+// ── DOM Builder ────────────────────────────────────────────────
+
+/**
+ * Build and return a task card <div> element, wired with event handlers.
+ *
+ * @param {Object}   task
+ * @param {Function} onDelete  — (taskId) => void
+ * @param {Function} onToggle  — (taskId) => void
+ * @param {Function} onEdit    — (task)   => void
+ * @returns {HTMLDivElement}
+ */
+export function buildTaskCard(task, onDelete, onToggle, onEdit) {
+  const card = document.createElement('div');
+  card.className = `task-card${task.completed ? ' task-card--done' : ''}`;
+  card.dataset.id = task.id;
+
+  const checkClass = task.completed
+    ? 'task-card__check task-card__check--done'
+    : 'task-card__check';
+  const checkLabel = task.completed ? 'Mark incomplete' : 'Mark complete';
+
+  card.innerHTML = `
+    <div class="task-card__top">
+      <span class="task-card__title">${escapeHtml(task.title)}</span>
+      <div class="task-card__controls">
+
+        <!-- Delete — hidden by CSS, revealed on .task-card:hover -->
+        <button class="task-card__delete" aria-label="Delete task" title="Delete task">
+          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"/>
+            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+            <path d="M10 11v6M14 11v6"/>
+            <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+          </svg>
         </button>
 
-        <div class="task-card__top">
-          <span class="task-card__title">${escapeHtml(task.title)}</span>
-          <button class="task-card__check"
-                  data-action="toggle"
-                  data-id="${task.id}"
-                  aria-label="${task.completed ? 'Mark incomplete' : 'Mark complete'}"
-                  title="${task.completed ? 'Mark incomplete' : 'Mark complete'}">
-            ${checkSvg}
-          </button>
-        </div>
+        <!-- Complete toggle -->
+        <button class="${checkClass}" aria-label="${checkLabel}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </button>
 
-        ${description}
-        ${durationLabel ? `<p class="task-card__duration">${durationLabel}</p>` : ''}
-        ${timeLabel     ? `<p class="task-card__time">${timeLabel}</p>`         : ''}
-        ${dueDate}
       </div>
-    `;
-  }
+    </div>
+    <p class="task-card__duration">${task.duration} min${task.duration !== 1 ? 's' : ''}</p>
+    <p class="task-card__time">${formatTime(task.time)}</p>
+  `;
 
-  /* ─────────────────────────────────────────────────
-     EVENT DELEGATION
-  ───────────────────────────────────────────────── */
+  // Delete: stopPropagation so card click (→ edit) is NOT triggered
+  card.querySelector('.task-card__delete').addEventListener('click', (e) => {
+    e.stopPropagation();
+    onDelete(task.id);
+  });
 
-  function attachGridListeners() {
-    if (!elGrid) return;
+  // Toggle complete: also stopPropagation
+  card.querySelector('.task-card__check').addEventListener('click', (e) => {
+    e.stopPropagation();
+    onToggle(task.id);
+  });
 
-    // Remove previous listener to avoid stacking (clone trick)
-    const newGrid = elGrid.cloneNode(true);
-    elGrid.parentNode.replaceChild(newGrid, elGrid);
-    elGrid = newGrid;
+  // Clicking anywhere else on the card opens the edit modal
+  card.addEventListener('click', () => onEdit(task));
 
-    elGrid.addEventListener('click', handleGridClick);
-    elGrid.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        handleGridClick(e);
-      }
-    });
-  }
+  return card;
+}
 
-  function handleGridClick(e) {
-    const actionEl = e.target.closest('[data-action]');
+// ── Utilities ──────────────────────────────────────────────────
 
-    if (actionEl) {
-      e.stopPropagation();
-      const { action, id } = actionEl.dataset;
-      if (action === 'toggle') { toggleComplete(id); return; }
-      if (action === 'delete') { deleteTask(id);     return; }
-    }
+/**
+ * Convert "HH:MM" (24-hour) to "H:MM AM/PM".
+ * @param {string} timeStr
+ * @returns {string}
+ */
+export function formatTime(timeStr) {
+  if (!timeStr || !timeStr.includes(':')) return '--:-- --';
+  const [h, m] = timeStr.split(':').map(Number);
+  const period = h >= 12 ? 'PM' : 'AM';
+  const hour   = h % 12 || 12;
+  return `${hour}:${String(m).padStart(2, '0')} ${period}`;
+}
 
-    // Click on card body → open edit modal
-    const card = e.target.closest('.task-card[data-id]');
-    if (card) {
-      const id = card.dataset.id;
-      if (typeof TaskCreationForm !== 'undefined') {
-        TaskCreationForm.openEditModal(id);
-      }
-    }
-  }
-
-  /* ─────────────────────────────────────────────────
-     TOGGLE COMPLETE
-  ───────────────────────────────────────────────── */
-
-  function toggleComplete(id) {
-    const tasks   = App.getTasks();
-    const idx     = tasks.findIndex(t => t.id === id);
-    if (idx === -1) return;
-
-    tasks[idx].completed = !tasks[idx].completed;
-    App.setTasks(tasks);
-    renderTasks();
-
-    const verb = tasks[idx].completed ? 'marked complete' : 'marked incomplete';
-    App.showToast(`"${tasks[idx].title}" ${verb}.`);
-  }
-
-  /* ─────────────────────────────────────────────────
-     DELETE TASK
-  ───────────────────────────────────────────────── */
-
-  function deleteTask(id) {
-    const tasks = App.getTasks();
-    const task  = tasks.find(t => t.id === id);
-    if (!task) return;
-
-    const updated = tasks.filter(t => t.id !== id);
-    App.setTasks(updated);
-    renderTasks();
-    App.showToast(`"${task.title}" deleted.`);
-  }
-
-  /* ─────────────────────────────────────────────────
-     COMPLETE ALL
-  ───────────────────────────────────────────────── */
-
-  function handleCompleteAll() {
-    const tasks = App.getTasks();
-    if (tasks.length === 0) {
-      App.showToast('No tasks to complete.', 'error');
-      return;
-    }
-    const allDone = tasks.every(t => t.completed);
-    const updated = tasks.map(t => ({ ...t, completed: !allDone }));
-    App.setTasks(updated);
-    renderTasks();
-    App.showToast(allDone ? 'All tasks marked incomplete.' : 'All tasks completed! 🎉');
-  }
-
-  /* ─────────────────────────────────────────────────
-     SHOW / HIDE COMPLETED TOGGLE
-  ───────────────────────────────────────────────── */
-
-  function handleToggleCompleted() {
-    showCompleted = !showCompleted;
-    renderTasks();
-  }
-
-  /* ─────────────────────────────────────────────────
-     UTILITY
-  ───────────────────────────────────────────────── */
-
-  /** Prevent XSS when inserting user content */
-  function escapeHtml(str) {
-    if (!str) return '';
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-  }
-
-  /* ─────────────────────────────────────────────────
-     INIT
-  ───────────────────────────────────────────────── */
-
-  function init() {
-    elGrid          = document.getElementById('taskGrid');
-    elEmptyState    = document.getElementById('emptyState');
-    elCountLabel    = document.getElementById('taskCountLabel');
-    elCompleteAll   = document.getElementById('completeAllBtn');
-    elShowCompleted = document.getElementById('showCompletedBtn');
-    elAddTask       = document.getElementById('addTaskBtn');
-
-    if (elCompleteAll)   elCompleteAll.addEventListener('click', handleCompleteAll);
-    if (elShowCompleted) elShowCompleted.addEventListener('click', handleToggleCompleted);
-
-    // Initial render
-    renderTasks();
-
-    console.log('[TasksComponent] Initialised.');
-  }
-
-  /* ── Public API ─────────────────────────────────── */
-  return { init, renderTasks, deleteTask, toggleComplete, escapeHtml };
-})();
+/**
+ * Escape HTML to prevent XSS when inserting into innerHTML.
+ * @param {string} str
+ * @returns {string}
+ */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
