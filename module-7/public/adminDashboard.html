@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>Blog Admin Dashboard</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#5048e5",
+            "background-light": "#f6f6f8",
+            "background-dark": "#121121",
+          },
+          fontFamily: {
+            "display": ["Inter"]
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display">
+  <div class="flex h-screen overflow-hidden">
+
+    <!-- Sidebar -->
+    <aside class="w-64 flex-shrink-0 border-r border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark flex flex-col">
+      <div class="p-6 flex flex-col h-full">
+        <div class="flex items-center gap-3 mb-8">
+          <div class="size-10 rounded-full bg-primary flex items-center justify-center text-white">
+            <span class="material-symbols-outlined">auto_stories</span>
+          </div>
+          <div class="flex flex-col">
+            <h1 class="text-base font-bold leading-none">Blog Admin</h1>
+            <p class="text-slate-500 dark:text-slate-400 text-xs mt-1">Management Portal</p>
+          </div>
+        </div>
+        <nav class="flex flex-col gap-2 flex-1">
+          <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg bg-primary text-white font-medium" href="#">
+            <span class="material-symbols-outlined text-lg">description</span>
+            <span>Blogs</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors font-medium" href="#">
+            <span class="material-symbols-outlined text-lg">group</span>
+            <span>Users</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors font-medium" href="#">
+            <span class="material-symbols-outlined text-lg">analytics</span>
+            <span>Analytics</span>
+          </a>
+          <a class="flex items-center gap-3 px-4 py-2.5 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-primary/10 transition-colors font-medium" href="#">
+            <span class="material-symbols-outlined text-lg">settings</span>
+            <span>Settings</span>
+          </a>
+        </nav>
+        <div class="mt-auto pt-6 border-t border-slate-200 dark:border-primary/10">
+          <div class="flex items-center gap-3 px-2">
+            <div class="size-9 rounded-full bg-slate-200 dark:bg-primary/20 bg-cover bg-center"
+              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBds3eiDxaZEkfTx0txDIdQauAOYIHPDZvgAh65qXrvpbx5eFkUArDVV_Q0ZoaNjN_1m1hfW4tUNWvDy11uAdwQ4fNVLLTALW0cz9MgxJ29Pv8gIXDqcU0aexOV9yBAoNPpP7A8927MG3G_GgvqsC6uNEwl-csV97l7ZqcBifzE8MHjOSI-GWswufKpr8JqYVsBIO8v6wo2eqUEN7sKJGB1Brj2wU_u4TyhjB5WObFRDvFqROD7__yiAz-eCvdRFKjEFxJ1hHg1BeYm')">
+            </div>
+            <div class="flex flex-col overflow-hidden">
+              <p class="text-sm font-semibold truncate">Alex Rivera</p>
+              <p class="text-xs text-slate-500 truncate">Super Admin</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col min-w-0 overflow-hidden">
+
+      <!-- Header -->
+      <header class="h-16 border-b border-slate-200 dark:border-primary/20 bg-white dark:bg-background-dark px-8 flex items-center justify-between">
+        <div class="flex items-center flex-1 max-w-md">
+          <div class="relative w-full">
+            <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
+            <input class="w-full bg-slate-100 dark:bg-primary/5 border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary focus:bg-white dark:focus:bg-background-dark transition-all" placeholder="Search posts, authors, or tags..." type="text"/>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="p-2 text-slate-500 hover:bg-slate-100 dark:hover:bg-primary/10 rounded-lg transition-colors relative">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="absolute top-2 right-2 size-2 bg-red-500 rounded-full border-2 border-white dark:border-background-dark"></span>
+          </button>
+          <div class="h-8 w-px bg-slate-200 dark:bg-primary/20 mx-2"></div>
+          <button class="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity">
+            <span class="material-symbols-outlined text-lg">add</span>
+            <span>Create New</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-background-dark/50">
+        <div class="max-w-7xl mx-auto">
+          <div class="flex flex-col gap-6">
+
+            <div class="flex justify-between items-end">
+              <div>
+                <h2 class="text-2xl font-black tracking-tight">Blog Posts</h2>
+                <p class="text-slate-500 dark:text-slate-400">Manage and publish your site's content</p>
+              </div>
+              <div class="flex bg-white dark:bg-primary/5 p-1 rounded-lg border border-slate-200 dark:border-primary/20">
+                <button class="px-4 py-1.5 text-sm font-medium rounded-md bg-primary text-white">All Posts</button>
+                <button class="px-4 py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-primary/10">Published</button>
+                <button class="px-4 py-1.5 text-sm font-medium rounded-md text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-primary/10">Drafts</button>
+              </div>
+            </div>
+
+            <!-- Table -->
+            <div class="bg-white dark:bg-background-dark border border-slate-200 dark:border-primary/20 rounded-xl overflow-hidden shadow-sm">
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 dark:bg-primary/5 border-b border-slate-200 dark:border-primary/20">
+                      <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Title</th>
+                      <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Author</th>
+                      <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Status</th>
+                      <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">Date</th>
+                      <th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 dark:divide-primary/10">
+
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                      <td class="px-6 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-900 dark:text-slate-100">Mastering UI/UX Principles in 2024</span>
+                          <span class="text-xs text-slate-500 dark:text-slate-400">Design, Trends</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="size-6 rounded-full bg-slate-200 dark:bg-primary/30 flex items-center justify-center overflow-hidden">
+                            <img alt="Jane Cooper" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBPZswflErbvzjTRt1UWTssbnedcmCFsnw-y3AB0wP7P7ypuhMr3sa88kDQC-MFGRlSNpt8AZ3DvwfoQ7y7WmbYz2pnnZFpyD04PMjGjVinROh-GuAmMkHDrhOPEeFzJ-KRmNvC6OBEnnkkf1pblHYDsNe18oY0Y6BdfivbtgDy_NSAivjNKXZ4iXBtYFF2h_8LhDIFeBUohmAdrFFzWRBm2k0weanr-w06b_faAJwOBC5LXJ_5Nnz99ghJ3pVS6i3nEQRODtWyqCcr"/>
+                          </div>
+                          <span class="text-sm font-medium">Jane Cooper</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Published</span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 24, 2023</td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                          </button>
+                          <button class="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Delete">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                      <td class="px-6 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-900 dark:text-slate-100">Top 10 LLMs for Developers</span>
+                          <span class="text-xs text-slate-500 dark:text-slate-400">Technology, AI</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="size-6 rounded-full bg-slate-200 dark:bg-primary/30 flex items-center justify-center overflow-hidden">
+                            <img alt="Sam Wilson" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA2ebZJFwcic9OYMSzX1X8FNL2NMrRY9byZehrvTYMO0M9oRPcJ0ovZcW-os71r8I3Iapyiij4tuknIhnJNHXsVtJp-esRjwG8lQcsdrOOf8v92hbXH9zuuEnaUacNDVJWCPh8YgZnsh5rbSvm-_4RMnpHmoP2QlG0EySkqZIl0INx_ZSIUj1X5A9S08KO4PGNTT9INP4JCeafXV0clks5h7VuYx_7Hw3ptD1o3-yx-_OVK7kTrh0rYsCC8pgLBigDn4lgdq1PsZ2C3"/>
+                          </div>
+                          <span class="text-sm font-medium">Sam Wilson</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400">Draft</span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 22, 2023</td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                          </button>
+                          <button class="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Delete">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                      <td class="px-6 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-900 dark:text-slate-100">Building Scalable Microservices</span>
+                          <span class="text-xs text-slate-500 dark:text-slate-400">Backend, Architecture</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="size-6 rounded-full bg-slate-200 dark:bg-primary/30 flex items-center justify-center overflow-hidden">
+                            <img alt="Alex Rivera" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD_ZMB1EueXdLc2U5XD6nsdi_dNYzPNJm-rFahGcQsl7T7TYcnAxSOqRgN9-aEZBV7tfpWvIWeGXeh1GPLMTXuBXVO24K7vBLOPlqZ69R4FW7Wwfd5g3fZkEAtcWAIaHYTbsor_ONPuDFEyYK-cq7e6E9Nq7-naqw0pjS9En5JeF-MhjQjwsP8Hk6CLbS-NRBaCYbS9lkfBQNJH07wMxvXKfUDfOajyGPWUYDHlYPv2iumQyzgZZ1SdMNZ48JU0eqnjWq7m3pP-cmSN"/>
+                          </div>
+                          <span class="text-sm font-medium">Alex Rivera</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400">Published</span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 18, 2023</td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                          </button>
+                          <button class="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Delete">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                      <td class="px-6 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-900 dark:text-slate-100">The Future of Edge Computing</span>
+                          <span class="text-xs text-slate-500 dark:text-slate-400">Tech, Infrastructure</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <div class="flex items-center gap-2">
+                          <div class="size-6 rounded-full bg-slate-200 dark:bg-primary/30 flex items-center justify-center overflow-hidden">
+                            <img alt="Morgan Lee" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUtW20LQHOPwmcs1J9bttPbXCJ56KB2DRuhpgdnWkrI_bBp_smahsCajM_klGQcJMf10dIEcKOO10GAEQCgDSEqpmwd6Oaq3N7bZBOxqpZIExPBLigB8qpg8e8PRf-64VJltV9LxZWZyIvENFsGFVA90QPmpyPGGyutJDCaAFPbVwIj1u-ZJzIm-B_X8jRgrJVIKnPkObcQmjWAEFBwcsJLZnr1f4Tr5l_1uTIb_kyOs4XG2EaJz25lamOvu2XxuCCBx3WHe8b33W4"/>
+                          </div>
+                          <span class="text-sm font-medium">Morgan Lee</span>
+                        </div>
+                      </td>
+                      <td class="px-6 py-4">
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800 dark:bg-primary/20 dark:text-slate-300">Archived</span>
+                      </td>
+                      <td class="px-6 py-4 text-sm text-slate-500 dark:text-slate-400">Oct 15, 2023</td>
+                      <td class="px-6 py-4 text-right">
+                        <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <button class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                          </button>
+                          <button class="p-1.5 text-red-500 hover:bg-red-500/10 rounded-lg transition-colors" title="Delete">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              <div class="px-6 py-4 bg-slate-50 dark:bg-primary/5 border-t border-slate-200 dark:border-primary/20 flex items-center justify-between">
+                <p class="text-sm text-slate-500 dark:text-slate-400">Showing 1 to 4 of 24 results</p>
+                <div class="flex gap-2">
+                  <button class="px-3 py-1 text-sm border border-slate-200 dark:border-primary/20 rounded-lg hover:bg-white dark:hover:bg-primary/10 disabled:opacity-50" disabled>Previous</button>
+                  <button class="px-3 py-1 text-sm border border-slate-200 dark:border-primary/20 rounded-lg bg-white dark:bg-primary/10 hover:bg-slate-50 font-bold">1</button>
+                  <button class="px-3 py-1 text-sm border border-slate-200 dark:border-primary/20 rounded-lg hover:bg-white dark:hover:bg-primary/10">2</button>
+                  <button class="px-3 py-1 text-sm border border-slate-200 dark:border-primary/20 rounded-lg hover:bg-white dark:hover:bg-primary/10">3</button>
+                  <button class="px-3 py-1 text-sm border border-slate-200 dark:border-primary/20 rounded-lg hover:bg-white dark:hover:bg-primary/10">Next</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>
